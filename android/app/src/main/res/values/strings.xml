@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Aurora Nexus</string>
+    <string name="title_activity_main">Aurora Nexus</string>
+    <string name="package_name">com.masumbillah.auroranexus</string>
+    <string name="custom_url_scheme">com.masumbillah.auroranexus</string>
+</resources>

@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Character Encoding -->
+    <meta charset="UTF-8">
+
+    <!-- Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>Aurora Nexus | Neural Audio Experience</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Orbitron -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+    <!-- Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+
+    <!--==================================
+            AI BACKGROUND
+    ===================================-->
+    
+    <div id="bg-layer"></div>
+
+    <!--==================================
+            AI BOOT SCREEN
+    ===================================-->
+    
+    <div id="boot-screen">
+    
+        <div class="boot-container">
+    
+            <h1 class="boot-logo">
+    
+                AURORA NEXUS
+    
+            </h1>
+    
+            <p class="boot-version">
+    
+                Neural Audio Experience v1.0
+    
+            </p>
+    
+            <div class="boot-console">
+    
+                <p class="boot-line">Initializing Neural Core...</p>
+    
+                <p class="boot-line">Loading Audio Engine...</p>
+    
+                <p class="boot-line">Scanning Music Library...</p>
+    
+                <p class="boot-line">Connecting AI Assistant...</p>
+    
+                <p class="boot-line">System Ready.</p>
+    
+            </div>
+    
+            <div class="loading-bar">
+    
+                <div class="loading-progress"></div>
+    
+            </div>
+
+            <!-- ===============================
+                        Neural Memory Engine
+            ================================ -->
+            <div id="memory-status" class="memory-status">
+            
+                <p class="memory-title">
+            
+                    🧠 NEURAL MEMORY ENGINE
+            
+                </p>
+            
+                <span id="memory-message">
+            
+                    Initializing...
+            
+                </span>
+            
+            </div>
+    
+        </div>
+    
+    </div>
+
+ 
+    <!-- ===============================
+            Animated Background
+    ================================ -->
+
+    <div class="background-grid"></div>
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <!-- ===============================
+                Main App
+    ================================ -->
+
+    <main class="app">
+
+        <!-- ===============================
+                    Header
+        ================================ -->
+
+        <header class="header">
+
+            <div class="logo">
+
+                <h1>AURORA NEXUS</h1>
+
+                <p>Neural Audio Experience</p>
+
+            </div>
+
+        </header>
+
+        <!-- ===============================
+                  AI Status
+        ================================ -->
+
+        <section class="ai-status">
+
+            <div class="status-indicator"></div>
+
+            <div class="status-info">
+
+                <h3>AI STATUS</h3>
+
+                <p>ONLINE</p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===============================
+                Album Section
+        ================================ -->
+
+        <section class="album-section player">
+        
+            <div class="album-ring">
+        
+                <img id="album-cover" src="./assets/images/believer.jpg" alt="Album Cover">
+                <div class="album-hologram"></div>
+                
+                <div class="album-light"></div>
+                <canvas id="circle-spectrum"></canvas>
+        
+            </div>
+        
+        </section>
+
+        <!-- ===============================
+                Song Information
+        ================================ -->
+
+        <section class="song-info">
+
+            <h2 id="song-title">
+
+                Believer
+
+            </h2>
+
+            <p id="artist-name">
+
+                Imagine Dragons
+
+            </p>
+
+        </section>
+
+        <!-- ===============================
+                Progress Section
+        ================================ -->
+
+        <section class="progress-section">
+
+            <span id="current-time">
+
+                00:00
+
+            </span>
+
+            <input type="range" class="progress" min="0" max="100" value="0">
+
+            <span id="duration">
+
+                00:00
+
+            </span>
+
+        </section>
+
+        <!-- ===============================
+                    Controls
+        ================================ -->
+
+        <section class="controls">
+
+            <button id="shuffle">
+
+                <i class="fa-solid fa-shuffle"></i>
+
+            </button>
+
+            <button id="previous">
+
+                <i class="fa-solid fa-backward-step"></i>
+
+            </button>
+
+            <button id="play">
+
+                <i class="fa-solid fa-play"></i>
+
+            </button>
+
+            <button id="next">
+
+                <i class="fa-solid fa-forward-step"></i>
+
+            </button>
+
+            <button id="repeat">
+
+                <i class="fa-solid fa-repeat"></i>
+
+            </button>
+         
+        </section>
+            
+        <!--==================================
+                AI ACTION PANEL
+        ===================================-->
+        
+        <section class="ai-actions">
+        
+            <button id="voice-btn" class="action-btn">
+        
+                <i class="fa-solid fa-microphone-lines"></i>
+        
+                <span>AURA</span>
+        
+            </button>
+        
+            <button id="favorite-btn" class="action-btn">
+        
+                <i class="fa-regular fa-heart"></i>
+        
+                <span>FAVORITE</span>
+        
+            </button>
+        
+            <button id="share-btn" class="action-btn">
+        
+                <i class="fa-solid fa-share-nodes"></i>
+        
+                <span>SHARE</span>
+        
+            </button>
+        
+        </section>
+
+       
+        <!--====================================
+                VOLUME CONTROLLER
+        =====================================-->
+    
+        <section class="volume-section">
+        
+            <div class="volume-wrapper">
+            
+                <div id="volume-ring"></div>
+            
+                <div id="volume-knob">
+            
+                    <i id="volume-icon" class="fa-solid fa-volume-high"></i>
+            
+                </div>
+            
+            </div>
+        
+            <p id="volume-value">100%</p>
+        
+        </section>
+
+        <!-- ===============================
+                Audio Visualizer
+        ================================ -->
+
+        <section class="visualizer-section">
+
+            <div class="galaxy-bg"></div>
+            <canvas id="visualizer"></canvas>
+
+        </section>
+
+            
+
+        <!-- ===============================
+                Equalizer
+        ================================ -->
+
+        <section class="equalizer">
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </section>
+
+           
+        <!-- ===============================
+                    PLAYLIST
+        ================================ -->
+        
+        <section class="playlist">
+        
+            <div class="playlist-header">
+        
+                <h2>
+        
+                    <i class="fa-solid fa-list-music"></i>
+        
+                    MISSION PLAYLIST
+        
+                </h2>
+        
+                <span id="playlist-count">
+                    0 Tracks
+                </span>
+        
+            </div>
+        
+            <!-- Playlist Filter -->
+        
+            <div class="playlist-filter">
+        
+                <button class="filter-btn active" data-filter="all">
+        
+                    🎵 All
+        
+                </button>
+        
+                <button class="filter-btn" data-filter="favorite">
+        
+                    ❤️ Favorites
+        
+                </button>
+        
+                <button class="filter-btn" data-filter="recent">
+        
+                    🎧 Recent
+        
+                </button>
+        
+                <button class="filter-btn" data-filter="trending">
+        
+                    🔥 Trending
+        
+                </button>
+        
+            </div>
+        
+            <!-- Search -->
+        
+            <div class="playlist-search">
+        
+                <input id="search-song" type="text" placeholder="Search music...">
+        
+                <i class="fa-solid fa-magnifying-glass"></i>
+        
+            </div>
+        
+            <!-- Playlist -->
+        
+            <ul id="playlist"></ul>
+        
+        </section>
+
+
+        <!--==================================
+                    PLAY QUEUE
+        ===================================-->
+        
+        <section class="queue-section">
+        
+            <div class="queue-header">
+        
+                <h2>PLAY QUEUE</h2>
+        
+                <span id="queue-count">
+        
+                    0 Songs
+        
+                </span>
+        
+            </div>
+        
+            <ul id="queue-list">
+        
+            </ul>
+        
+        </section>
+
+
+       
+        <!--=================================================
+                        AURORA AI ASSISTANT
+        =====================================================-->
+        
+       
+        <section class="ai-panel">
+        
+            <div class="ai-header">
+        
+                <div class="ai-avatar">
+        
+                    🤖
+        
+                </div>
+        
+                <div>
+        
+                    <h2>AURORA AI</h2>
+        
+                    <p id="ai-status">
+        
+                        System Online
+        
+                    </p>
+        
+                </div>
+        
+            </div>
+
+            <!--===============================
+                        AI LYRICS PANEL
+            ================================-->
+
+            <section class="lyrics">
+            
+                <div class="lyrics-header">
+            
+                    <span>🤖 AI LIVE LYRICS</span>
+            
+                    <div class="record-dot"></div>
+            
+                </div>
+            
+                <div id="player-lyrics-box"></div>
+            
+            </section>
+        
+            <div class="ai-card">
+        
+                <span>Now Playing</span>
+        
+                <h3 id="ai-song">
+        
+                    Believer
+        
+                </h3>
+        
+            </div>
+        
+            <div class="ai-card">
+        
+                <span>Artist</span>
+        
+                <h3 id="ai-artist">
+        
+                    Imagine Dragons
+        
+                </h3>
+        
+            </div>
+        
+            <div class="ai-card">
+        
+                <span>Mood</span>
+        
+                <h3 id="ai-mood">
+        
+                    🔥 Energetic
+        
+                </h3>
+        
+            </div>
+        
+            <div class="ai-card">
+        
+                <span>Energy</span>
+        
+                <h3 id="ai-energy">
+        
+                    95%
+        
+                </h3>
+        
+            </div>
+        
+            <div class="ai-card">
+        
+                <span>Recommendation</span>
+        
+                <h3 id="ai-recommend">
+        
+                    Thunder
+        
+                </h3>
+        
+            </div>
+        
+        </section>
+
+        
+        <!--==================================
+                BOTTOM NAVIGATION
+        ===================================-->
+        
+        <!--==================================
+                NEURAL GLASS DOCK
+        ===================================-->
+        
+        <nav class="bottom-dock">
+        
+            <!-- Moving Glow -->
+            <div class="dock-glow"></div>
+
+            <div class="dock-pill"></div>
+        
+            <!-- Active Indicator -->
+            <div class="dock-indicator"></div>
+        
+            <!--==================================
+                            PLAYER
+            ===================================-->
+        
+            <button class="dock-btn" data-panel="player">
+        
+                <div class="dock-icon">
+        
+                    <i class="fa-solid fa-music"></i>
+        
+                </div>
+        
+                <span>Player</span>
+        
+            </button>
+        
+            <!--==================================
+                            EQUALIZER
+            ===================================-->
+        
+            <button class="dock-btn" data-panel="equalizer">
+        
+                <div class="dock-icon">
+        
+                    <i class="fa-solid fa-sliders"></i>
+        
+                </div>
+        
+                <span>Equalizer</span>
+        
+            </button>
+        
+            <!--==================================
+                            AI
+            ===================================-->
+        
+            <button class="dock-btn" data-panel="ai">
+        
+                <div class="dock-icon">
+        
+                    <i class="fa-solid fa-robot"></i>
+        
+                </div>
+        
+                <span>AI</span>
+        
+            </button>
+
+        
+            <!--==================================
+                            SETTINGS
+            ===================================-->
+        
+            <button class="dock-btn" data-panel="settings">
+        
+                <div class="dock-icon">
+        
+                    <i class="fa-solid fa-gear"></i>
+        
+                </div>
+        
+                <span>Settings</span>
+                
+        
+            </button>
+        
+        </nav>
+
+
+        <div id="equalizer-panel" class="panel-screen">
+
+            <button class="panel-close">
+            
+                <i class="fa-solid fa-xmark"></i>
+            
+            </button>
+
+            <div class="eq-container">
+            
+                <div class="eq-header">
+            
+                    <h2>
+            
+                        <i class="fa-solid fa-sliders"></i>
+            
+                        NEURAL EQUALIZER
+            
+                    </h2>
+            
+                    <p>
+            
+                        Aurora Audio Engine
+            
+                    </p>
+            
+                </div>
+            
+                <div class="preset-grid">
+            
+                    <button class="preset active">
+                        Normal
+                    </button>
+            
+                    <button class="preset">
+                        Bass
+                    </button>
+            
+                    <button class="preset">
+                        Pop
+                    </button>
+            
+                    <button class="preset">
+                        Rock
+                    </button>
+            
+                    <button class="preset">
+                        Jazz
+                    </button>
+            
+                    <button class="preset">
+                        Classical
+                    </button>
+            
+                    <button class="preset">
+                        Hip Hop
+                    </button>
+            
+                    <button class="preset">
+                        Electronic
+                    </button>
+            
+                    <button class="preset">
+                        Vocal
+                    </button>
+            
+                    <button class="preset">
+                        Custom
+                    </button>
+            
+                </div>
+
+
+
+                <!--==================================
+                        ADVANCED AUDIO CONTROLS
+                ===================================-->
+                
+                <div class="advanced-controls">
+                
+                    <div class="control-card">
+                
+                        <label>BASS BOOST</label>
+                
+                        <input id="bass-control" type="range" min="-12" max="12" value="0">
+                
+                    </div>
+                
+                    <div class="control-card">
+                
+                        <label>TREBLE</label>
+                
+                        <input id="treble-control" type="range" min="-12" max="12" value="0">
+                
+                    </div>
+                
+                    <div class="control-card">
+                
+                        <label>STEREO</label>
+                
+                        <input id="balance-control" type="range" min="-1" max="1" step="0.01" value="0">
+                
+                    </div>
+                
+                    <div class="control-card">
+                
+                        <label>MASTER</label>
+                
+                        <input id="master-control" type="range" min="0" max="2" step="0.01" value="1">
+                
+                    </div>
+                
+                </div>
+
+                <div class="spatial-controls">
+                
+                    <div class="control-card">
+                
+                        <label>SPATIAL</label>
+                
+                        <input id="spatial-control" type="range" min="0" max="1" step="0.01" value="0.5">
+                
+                    </div>
+                
+                    <div class="control-card">
+                
+                        <label>ROOM SIZE</label>
+                
+                        <input id="room-control" type="range" min="0" max="1" step="0.01" value="0.4">
+                
+                    </div>
+                
+                </div>
+
+                <div class="eq-wave">
+
+                    <canvas id="eqCanvas"></canvas>
+
+                </div>
+            
+            </div>
+
+        </div>
+
+
+        
+        <div id="ai-panel-screen" class="panel-screen">
+        
+            <button class="panel-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        
+            <!--=================================
+                    AURORA AI ASSISTANT
+            ==================================-->
+        
+            <section class="ai-panel">
+        
+                <div class="ai-header">
+        
+                    <div class="ai-avatar">🤖</div>
+        
+                    <div>
+        
+                        <h2>AURORA AI</h2>
+        
+                        <p id="ai-status">
+                            System Online
+                        </p>
+        
+                    </div>
+        
+                </div>
+        
+                <!--===============================
+                        AI LIVE LYRICS
+                ===============================-->
+        
+                <section class="lyrics">
+        
+                    <div class="lyrics-header">
+        
+                        <span>🤖 AI LIVE LYRICS</span>
+        
+                        <div class="record-dot"></div>
+        
+                    </div>
+        
+                    <div id="ai-lyrics-box"></div>
+        
+                </section>
+        
+                <!--===============================
+                        AI INFO
+                ===============================-->
+        
+                <div class="ai-card">
+        
+                    <span>Now Playing</span>
+        
+                    <h3 id="ai-song">Believer</h3>
+        
+                </div>
+        
+                <div class="ai-card">
+        
+                    <span>Artist</span>
+        
+                    <h3 id="ai-artist">Imagine Dragons</h3>
+        
+                </div>
+        
+                <div class="ai-card">
+        
+                    <span>Mood</span>
+        
+                    <h3 id="ai-mood">🔥 Energetic</h3>
+        
+                </div>
+        
+                <div class="ai-card">
+        
+                    <span>Energy</span>
+        
+                    <h3 id="ai-energy">95%</h3>
+        
+                </div>
+        
+                <div class="ai-card">
+        
+                    <span>Recommendation</span>
+        
+                    <h3 id="ai-recommend">Thunder</h3>
+        
+                </div>
+        
+            </section>
+        
+        </div>
+
+
+        
+        <div id="settings-panel" class="panel-screen">
+            <button class="panel-close">
+            
+                <i class="fa-solid fa-xmark"></i>
+            
+            </button>
+
+            <!-- =========================================
+                            SETTINGS PANEL
+            ========================================= -->
+            
+            <div id="settings-panel" class="panel">
+            
+                <!-- Header -->
+                <div class="panel-header">
+            
+                    <div>
+                        <h2>⚙️ SETTINGS</h2>
+                       
+                    </div>
+            
+                    <button class="panel-close" type="button">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+            
+                </div>
+
+
+                <!--====================================
+                        AURORA AI DASHBOARD
+                =====================================-->
+                
+                <section class="settings-section ai-dashboard">
+                
+                    <div class="dashboard-header">
+                
+                        <div>
+                
+                            <h3>🤖 AURORA ANALYTICS</h3>
+                
+                            
+                
+                        </div>
+                
+                        <div class="ai-status-badge">
+                
+                            <span class="pulse-dot"></span>
+                
+                            ONLINE
+                
+                        </div>
+                
+                    </div>
+                
+                    <!-- XP -->
+                
+                    <div class="xp-card">
+                
+                        <div class="xp-top">
+                
+                            <span>LEVEL 01</span>
+                
+                            <span id="xp-text">0 / 1000 XP</span>
+                
+                        </div>
+                
+                        <div class="xp-bar">
+                
+                            <div id="xp-fill"></div>
+                
+                        </div>
+                
+                    </div>
+                
+                    <!-- Stats -->
+                
+                    <div class="stats-grid">
+                    
+                        <div class="stat-card">
+                    
+                            <span class="stat-number" id="stat-total-songs">0</span>
+                    
+                            <span class="stat-label">Songs Played</span>
+                    
+                        </div>
+                    
+                        <div class="stat-card">
+                    
+                            <span class="stat-number" id="stat-listening-time">0h</span>
+                    
+                            <span class="stat-label">Listening Time</span>
+                    
+                        </div>
+                    
+                        <div class="stat-card">
+                    
+                            <span class="stat-number" id="stat-most-played">-</span>
+                    
+                            <span class="stat-label">Most Played</span>
+                    
+                        </div>
+                    
+                        <div class="stat-card">
+                    
+                            <span class="stat-number" id="stat-favorite-artist">-</span>
+                    
+                            <span class="stat-label">Favorite Artist</span>
+                    
+                        </div>
+                    
+                        <div class="stat-card">
+                    
+                            <span class="stat-number" id="stat-daily">0m</span>
+                    
+                            <span class="stat-label">Today</span>
+                    
+                        </div>
+                    
+                        <div class="stat-card">
+                    
+                            <span class="stat-number" id="stat-weekly">0h</span>
+                    
+                            <span class="stat-label">This Week</span>
+                    
+                        </div>
+                    
+                    </div>
+                
+                    <!-- AI Report -->
+                
+                    <div class="ai-report-card">
+                
+                        <h4>
+                
+                            <i class="fa-solid fa-robot"></i>
+                
+                            AI REPORT
+                
+                        </h4>
+                
+                        <p id="ai-report">
+                
+                            Aurora is analysing your listening habits...
+                
+                        </p>
+                
+                    </div>
+
+                    <div class="recommendation-card">
+                    
+                        <h4>
+                    
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    
+                            RECOMMENDED
+                    
+                        </h4>
+                    
+                        <div id="recommend-list">
+                    
+                            Searching songs...
+                    
+                        </div>
+                    
+                    </div>
+                
+                </section>
+            
+                         
+                <!-- =====================================
+                            APPEARANCE
+                ====================================== -->
+            
+                <section class="settings-section">
+                
+                    <h3>🎨 Appearance</h3>
+                
+                    <!-- Dark Mode -->
+                
+                    <div class="setting-item">
+                
+                        <div>
+                            <strong>Dark Mode</strong>
+                            <span>Use dark interface</span>
+                        </div>
+                
+                        <label class="setting-switch">
+                
+                            <input type="checkbox" id="setting-dark-mode" checked>
+                
+                            <span class="switch-slider"></span>
+                
+                        </label>
+                
+                    </div>
+                
+                
+                    <!-- Accent Color -->
+                
+                    <div class="setting-item">
+                
+                        <div>
+                            <strong>Accent Color</strong>
+                            <span>Choose interface accent</span>
+                        </div>
+                
+                        <div class="select-wrapper">
+                        
+                            <select id="setting-accent-color">
+                        
+                                <option value="cyan">🟦 Cyan</option>
+                                <option value="purple">🟣 Purple</option>
+                                <option value="blue">🔵 Blue</option>
+                                <option value="pink">🌸 Pink</option>
+                                <option value="green">🟢 Green</option>
+                        
+                            </select>
+                        
+                        </div>
+                
+                    </div>
+                
+                
+                    <!-- Custom Accent -->
+                
+                    <div class="setting-item">
+                
+                        <div>
+                
+                            <strong>Custom Accent</strong>
+                
+                            <span>Create your own theme</span>
+                
+                        </div>
+                
+                        <input type="color" id="theme-picker" value="#00F5FF">
+                
+                    </div>
+                
+                </section>
+
+
+
+                <!--====================================
+                        CROSSFADE SETTINGS
+                =====================================-->
+                
+                <section class="settings-section">
+                
+                    <h3>🎧 Crossfade</h3>
+                
+                    <div class="setting-item">
+                
+                        <div>
+                
+                            <strong>Enable Crossfade</strong>
+                
+                            <span>Smooth transition between songs</span>
+                
+                        </div>
+                
+                        <label class="setting-switch">
+                
+                            <input type="checkbox" id="setting-crossfade" checked>
+                
+                            <span class="switch-slider"></span>
+                
+                        </label>
+                
+                    </div>
+                
+                    <div class="setting-item">
+                
+                        <div>
+                
+                            <strong>Crossfade Duration</strong>
+                
+                            <span>
+                                <span id="crossfade-value">3</span> sec
+                            </span>
+                
+                        </div>
+                
+                    </div>
+                
+                    <input type="range" id="crossfade-slider" min="1" max="10" value="3">
+                
+                </section>
+            
+            
+                <!-- =====================================
+                              PLAYBACK
+                ====================================== -->
+            
+                <section class="settings-section">
+            
+                    <h3>🎵 Playback</h3>
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Autoplay</strong>
+                            <span>Automatically play selected song</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-autoplay" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Shuffle</strong>
+                            <span>Play songs randomly</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-shuffle">
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Repeat</strong>
+                            <span>Repeat current song</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-repeat">
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+                </section>
+            
+            
+                <!-- =====================================
+                                LYRICS
+                ====================================== -->
+            
+                <section class="settings-section">
+            
+                    <h3>📝 Lyrics</h3>
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Auto Lyrics</strong>
+                            <span>Automatically search lyrics</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-auto-lyrics" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Local LRC First</strong>
+                            <span>Use local .lrc before API</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-local-lrc" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Auto Scroll</strong>
+                            <span>Scroll lyrics with the song</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-lyrics-scroll" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+                </section>
+            
+            
+                <!-- =====================================
+                              AURORA AI
+                ====================================== -->
+            
+                <section class="settings-section">
+            
+                    <h3>🤖 Aurora AI</h3>
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>AI Assistant</strong>
+                            <span>Enable Aurora AI</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-ai" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Live Lyrics</strong>
+                            <span>Show lyrics inside AI panel</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-ai-lyrics" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+                </section>
+            
+            
+                <!-- =====================================
+                               EFFECTS
+                ====================================== -->
+            
+                <section class="settings-section">
+            
+                    <h3>✨ Effects</h3>
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Visualizer</strong>
+                            <span>Show audio visualizer</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-visualizer" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Animated Background</strong>
+                            <span>Enable animated galaxy background</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-background" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+                </section>
+            
+            
+                <!-- =====================================
+                                STORAGE
+                ====================================== -->
+            
+                <section class="settings-section">
+            
+                    <h3>💾 Storage</h3>
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Remember Last Song</strong>
+                            <span>Restore last played song</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-last-song" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+            
+                    <div class="setting-item">
+            
+                        <div>
+                            <strong>Remember Volume</strong>
+                            <span>Restore previous volume</span>
+                        </div>
+            
+                        <label class="setting-switch">
+            
+                            <input type="checkbox" id="setting-volume" checked>
+            
+                            <span class="switch-slider"></span>
+            
+                        </label>
+            
+                    </div>
+            
+                </section>
+
+
+                <!--====================================
+                        AI SLEEP MODE
+                =====================================-->
+                
+                <section class="ai-sleep-mode">
+                
+                    <h3>🌙 AI Sleep Mode</h3>
+                
+                    <div class="sleep-buttons">
+                
+                        <button class="sleep-btn" data-time="10">
+                            10m
+                        </button>
+                
+                        <button class="sleep-btn" data-time="20">
+                            20m
+                        </button>
+                
+                        <button class="sleep-btn" data-time="30">
+                            30m
+                        </button>
+                
+                        <button class="sleep-btn" data-time="45">
+                            45m
+                        </button>
+                
+                        <button class="sleep-btn" data-time="60">
+                            1H
+                        </button>
+                
+                    </div>
+                
+                    <button id="sleep-end-song" class="sleep-end-btn">
+                
+                        End Current Song
+                
+                    </button>
+                
+                    <div class="sleep-status">
+                
+                        No Sleep Timer
+                
+                    </div>
+                
+                    <button id="cancel-sleep" class="cancel-sleep-btn">
+                
+                        Cancel Timer
+                
+                    </button>
+                
+                </section>
+
+
+
+                <!--====================================
+                        AURORA CAST
+                =====================================-->
+                <section class="settings-section">
+
+                    <h3>📡 Aurora Cast</h3>
+
+                    <div class="setting-item aurora-cast-setting" id="aurora-cast-setting">
+                        
+                        <div class="setting-icon">
+                            <i class="fa-solid fa-tower-broadcast"></i>
+                        </div>
+                    
+                        <div class="setting-info">
+                            <strong>AURORA CAST</strong>
+                            <span id="cast-status">DEVICE OFFLINE</span>
+                        </div>
+                    
+                        <button id="aurora-cast-btn" class="cast-connect-btn" type="button">
+                            CONNECT
+                        </button>
+                    
+                    </div>
+
+                </section>
+                
+               
+
+                <button type="button" id="reset-app-data" class="reset-settings-btn">
+                    🗑️ Reset App Data
+                </button>
+            
+            </div>
+
+        </div>
+
+    </main>
+
+
+   
+
+    <!-- Audio -->
+
+    <audio id="audio"></audio>
+    <audio id="audio-next"></audio>
+
+    <!--==================================
+                        AI NOTIFICATION
+    ===================================-->
+
+    <div id="toast" class="toast">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span id="toast-message">
+
+            Welcome
+
+        </span>
+
+    </div>
+
+
+
+
+    <!-- =========================================
+                AURORA CAST API CALLBACK
+    =========================================== -->
+    
+    <!-- =========================================
+     GOOGLE CAST API CALLBACK
+    ========================================= -->
+
+    <script>
+        window.__onGCastApiAvailable = function (isAvailable) {
+
+            console.log(
+                "📡 GOOGLE CAST API:",
+                isAvailable
+            );
+
+            window.auroraCastAPIAvailable = isAvailable;
+
+        };
+    </script>
+
+
+    <!-- =========================================
+        GOOGLE CAST WEB SENDER SDK
+    ========================================= -->
+
+    <script
+        src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1">
+    </script>
+
+
+    <!-- =========================================
+        AURORA NEXUS SCRIPT
+    ========================================= -->
+
+    <script src="./script.js"></script>
+
+    
+
+</body>
+
+</html>
