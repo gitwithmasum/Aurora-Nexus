@@ -24,10 +24,34 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Capacitor MediaStore
+        run: |
+          npm install
+          npm install @odion-cloud/capacitor-mediastore@1.0.21 --save
+
+      - name: Copy device music bridge
+        run: |
+          cp device-library.js www/device-library.js
+
+      - name: Inject device music bridge
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("www/index.html")
+          text = p.read_text(encoding="utf-8")
+
+          tag = '<script src="./device-library.js"></script>'
+
+          if tag not in text:
+              text = text.replace(
+                  "</body>",
+                  f"    {tag}\n</body>"
+              )
+
+          p.write_text(text, encoding="utf-8")
+          PY
 
       - name: Generate Android app icons
         run: |
@@ -36,14 +60,41 @@ jobs:
             --assetPath resources
 
       - name: Sync Capacitor Android
-        run: npx cap sync android
+        run: |
+          npx cap sync android
+
+      - name: Add Android audio permissions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("android/app/src/main/AndroidManifest.xml")
+          text = p.read_text(encoding="utf-8")
+
+          permissions = [
+              '<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />',
+              '<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />'
+          ]
+
+          for permission in permissions:
+              if permission not in text:
+                  text = text.replace(
+                      "<application",
+                      permission + "\n\n    <application",
+                      1
+                  )
+
+          p.write_text(text, encoding="utf-8")
+          PY
 
       - name: Make Gradle executable
-        run: chmod +x android/gradlew
+        run: |
+          chmod +x android/gradlew
 
       - name: Build Aurora Nexus APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload Aurora Nexus APK
         uses: actions/upload-artifact@v4
