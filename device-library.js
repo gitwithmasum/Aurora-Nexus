@@ -28,7 +28,7 @@
 
         try {
             mediaStore = window.Capacitor.registerPlugin(
-                "CapacitorMediaStore"
+                "AuroraMedia"
             );
 
             return mediaStore;
@@ -101,22 +101,8 @@
 
         try {
 
-            await store.requestPermissions({
-                types: ["audio"]
-            });
-
             const result =
-                await store.getMediasByType({
-
-                    mediaType: "audio",
-
-                    sortBy: "TITLE",
-
-                    sortOrder: "ASC",
-
-                    includeExternal: true
-
-                });
+            await store.getSongs();
 
             const media =
                 Array.isArray(result?.media)
