@@ -6690,3 +6690,658 @@ position: fixed;
     }
 
 }
+
+
+/* =========================================================
+   AURORA NEXUS — DEVICE MUSIC
+   ========================================================= */
+
+#device-music-panel {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.device-music-container {
+    width: min(1100px, 92%);
+    margin: 0 auto;
+    padding: 35px 0 100px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.device-music-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.device-music-header h2 {
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 10px rgba(0, 245, 255, 0.45),
+        0 0 25px rgba(0, 245, 255, 0.15);
+}
+
+.device-music-header h2 i {
+    color: #00f5ff;
+
+    filter:
+        drop-shadow(0 0 8px rgba(0, 245, 255, 0.8));
+}
+
+.device-music-header p {
+    margin: 7px 0 0;
+
+    color: rgba(255, 255, 255, 0.55);
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   SCAN BUTTON
+   ========================================================= */
+
+#scan-device-music,
+#scan-device-music-empty,
+#scan-device-music-error {
+    border: 1px solid rgba(0, 245, 255, 0.45);
+
+    background:
+        linear-gradient(135deg,
+            rgba(0, 245, 255, 0.15),
+            rgba(80, 40, 255, 0.12));
+
+    color: #ffffff;
+
+    padding: 11px 17px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+#scan-device-music:hover,
+#scan-device-music-empty:hover,
+#scan-device-music-error:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #00f5ff;
+
+    background:
+        linear-gradient(135deg,
+            rgba(0, 245, 255, 0.25),
+            rgba(80, 40, 255, 0.2));
+
+    box-shadow:
+        0 0 15px rgba(0, 245, 255, 0.25),
+        inset 0 0 15px rgba(0, 245, 255, 0.05);
+}
+
+#scan-device-music:active,
+#scan-device-music-empty:active,
+#scan-device-music-error:active {
+    transform: scale(0.96);
+}
+
+#scan-device-music i,
+#scan-device-music-empty i,
+#scan-device-music-error i {
+    color: #00f5ff;
+}
+
+
+/* =========================================================
+   STATUS CARD
+   ========================================================= */
+
+.device-music-status {
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 17px 20px;
+
+    margin-bottom: 20px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, 0.07),
+            rgba(255, 255, 255, 0.025));
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.2),
+        inset 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.status-icon {
+
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #00f5ff;
+
+    background:
+        rgba(0, 245, 255, 0.08);
+
+    border:
+        1px solid rgba(0, 245, 255, 0.2);
+
+    box-shadow:
+        0 0 18px rgba(0, 245, 255, 0.08);
+}
+
+.status-icon i {
+    font-size: 19px;
+}
+
+.device-music-status strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+}
+
+.device-music-status span {
+    display: block;
+
+    margin-top: 5px;
+
+    color: rgba(255, 255, 255, 0.5);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.device-music-search {
+
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 17px;
+
+    margin-bottom: 22px;
+
+    border-radius: 15px;
+
+    background:
+        rgba(255, 255, 255, 0.045);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.device-music-search:focus-within {
+
+    border-color:
+        rgba(0, 245, 255, 0.45);
+
+    box-shadow:
+        0 0 20px rgba(0, 245, 255, 0.08);
+}
+
+.device-music-search>i {
+
+    color: rgba(0, 245, 255, 0.7);
+
+    font-size: 15px;
+}
+
+.device-music-search input {
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 14px;
+}
+
+.device-music-search input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+
+/* =========================================================
+   MUSIC LIST
+   ========================================================= */
+
+.device-music-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   SONG CARD
+   ========================================================= */
+
+.device-song {
+
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 11px 15px;
+
+    border-radius: 17px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.06);
+
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, 0.065),
+            rgba(255, 255, 255, 0.025));
+
+    color: #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        background 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.device-song:hover {
+
+    transform: translateX(4px);
+
+    border-color:
+        rgba(0, 245, 255, 0.3);
+
+    background:
+        linear-gradient(135deg,
+            rgba(0, 245, 255, 0.09),
+            rgba(80, 40, 255, 0.06));
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.2),
+        0 0 18px rgba(0, 245, 255, 0.05);
+}
+
+.device-song:active {
+    transform: scale(0.985);
+}
+
+
+/* =========================================================
+   ALBUM ART
+   ========================================================= */
+
+.device-song-art {
+
+    width: 55px;
+    height: 55px;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(135deg,
+            rgba(0, 245, 255, 0.12),
+            rgba(100, 40, 255, 0.12));
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+.device-song-art img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+.device-song-art i {
+
+    color: #00f5ff;
+
+    font-size: 20px;
+
+    filter:
+        drop-shadow(0 0 8px rgba(0, 245, 255, 0.6));
+}
+
+
+/* =========================================================
+   SONG INFORMATION
+   ========================================================= */
+
+.device-song-info {
+
+    min-width: 0;
+
+    flex: 1;
+}
+
+.device-song-info strong {
+
+    display: block;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+.device-song-info span {
+
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    color:
+        rgba(255, 255, 255, 0.55);
+
+    font-size: 12px;
+}
+
+.device-song-info small {
+
+    display: block;
+
+    margin-top: 3px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    color:
+        rgba(0, 245, 255, 0.55);
+
+    font-size: 10px;
+
+    letter-spacing: 0.5px;
+}
+
+
+/* =========================================================
+   PLAY ICON
+   ========================================================= */
+
+.device-song>i {
+
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #00f5ff;
+
+    background:
+        rgba(0, 245, 255, 0.08);
+
+    border:
+        1px solid rgba(0, 245, 255, 0.15);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.device-song:hover>i {
+
+    transform: scale(1.08);
+
+    background:
+        rgba(0, 245, 255, 0.16);
+
+    box-shadow:
+        0 0 15px rgba(0, 245, 255, 0.2);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.device-music-empty {
+
+    min-height: 300px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 40px 20px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, 0.045),
+            rgba(255, 255, 255, 0.018));
+
+    border:
+        1px dashed rgba(0, 245, 255, 0.16);
+}
+
+.empty-icon {
+
+    width: 75px;
+    height: 75px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 17px;
+
+    border-radius: 50%;
+
+    color: #00f5ff;
+
+    background:
+        rgba(0, 245, 255, 0.07);
+
+    border:
+        1px solid rgba(0, 245, 255, 0.18);
+
+    box-shadow:
+        0 0 30px rgba(0, 245, 255, 0.08);
+}
+
+.empty-icon i {
+    font-size: 28px;
+}
+
+.device-music-empty h3 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    letter-spacing: 1.5px;
+}
+
+.device-music-empty p {
+
+    max-width: 380px;
+
+    margin: 9px 0 18px;
+
+    color:
+        rgba(255, 255, 255, 0.48);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .device-music-container {
+        width: 94%;
+        padding-top: 25px;
+    }
+
+    .device-music-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .device-music-header h2 {
+        font-size: 21px;
+    }
+
+    #scan-device-music {
+        width: 100%;
+    }
+
+    .device-song {
+        padding: 10px 11px;
+        gap: 11px;
+    }
+
+    .device-song-art {
+        width: 48px;
+        height: 48px;
+        border-radius: 11px;
+    }
+
+    .device-song-info strong {
+        font-size: 13px;
+    }
+
+    .device-song>i {
+        width: 34px;
+        height: 34px;
+    }
+}

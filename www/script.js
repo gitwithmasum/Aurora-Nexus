@@ -168,6 +168,25 @@ const dockPill =
 const themePicker = document.getElementById("theme-picker");
 
 
+const deviceMusicPanel =
+    document.getElementById("device-music-panel");
+
+const deviceMusicList =
+    document.getElementById("device-music-list");
+
+const deviceMusicStatus =
+    document.getElementById("device-music-status");
+
+const deviceMusicCount =
+    document.getElementById("device-music-count");
+
+const scanDeviceMusicBtn =
+    document.getElementById("scan-device-music");
+
+const scanDeviceMusicEmptyBtn =
+    document.getElementById("scan-device-music-empty");
+
+
 
 /*====================================
         SLEEP TIMER
@@ -658,6 +677,8 @@ async function playSong() {
     musicStats.songsPlayed++;
 
     const currentSongData = songs[currentSong];
+    await playActivePlayer();
+
 
     musicStats.mostPlayed[currentSongData.title] =
         (musicStats.mostPlayed[currentSongData.title] || 0) + 1;
@@ -2978,13 +2999,13 @@ window.addEventListener("load", () => {
 =====================================*/
 
 function closePanels() {
-
     equalizerPanel.classList.remove("active");
-
     aiPanelScreen.classList.remove("active");
-
     settingsPanel.classList.remove("active");
 
+    if (deviceMusicPanel) {
+        deviceMusicPanel.classList.remove("active");
+    }
 }
 
 
@@ -3025,6 +3046,17 @@ dockBtns.forEach((btn, index) => {
 
             case 3:
                 settingsPanel.classList.add("active");
+                break;
+            case 4:
+                // Device Music
+                if (deviceMusicPanel) {
+                    deviceMusicPanel.classList.add("active");
+                }
+
+                if (typeof scanDeviceMusic === "function") {
+                    scanDeviceMusic();
+                }
+
                 break;
 
         }
@@ -6368,6 +6400,412 @@ window.__onGCastApiAvailable =
 
     };
 
+
+
+
+
+/*---------------------------------------
+           Device Music Scanner
+----------------------------------------*/
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+let deviceSongs = [];
+
+async function scanDeviceMusic() {
+
+    if (!deviceMusicList) return;
+
+    deviceMusicStatus.textContent = "SCANNING...";
+    deviceMusicCount.textContent = "Reading device music library...";
+
+    deviceMusicList.innerHTML = `
+        <div class="device-music-empty">
+            <div class="empty-icon">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+            </div>
+            <h3>SCANNING DEVICE</h3>
+            <p>Searching for music on your phone...</p>
+        </div>
+    `;
+
+    try {
+
+        // Capacitor native plugin
+        const AuroraMedia =
+            window.Capacitor?.Plugins?.AuroraMedia;
+
+        if (!AuroraMedia) {
+
+            throw new Error(
+                "AuroraMedia native plugin is not available."
+            );
+        }
+
+        const result =
+            await AuroraMedia.getSongs();
+
+        deviceSongs =
+            Array.isArray(result?.media)
+                ? result.media
+                : [];
+
+        deviceMusicStatus.textContent =
+            "SCAN COMPLETE";
+
+        deviceMusicCount.textContent =
+            `${deviceSongs.length} song${deviceSongs.length === 1 ? "" : "s"} found`;
+
+        renderDeviceMusic(deviceSongs);
+
+    } catch (error) {
+
+        console.error(
+            "Aurora Device Music Error:",
+            error
+        );
+
+        deviceMusicStatus.textContent =
+            "SCAN FAILED";
+
+        deviceMusicCount.textContent =
+            "Unable to read device music";
+
+        deviceMusicList.innerHTML = `
+            <div class="device-music-empty">
+
+                <div class="empty-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+
+                <h3>SCAN FAILED</h3>
+
+                <p>
+                    ${escapeHTML(
+            error?.message ||
+            "Unable to access device music."
+        )}
+                </p>
+
+                <button
+                    id="scan-device-music-error"
+                    type="button"
+                >
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    TRY AGAIN
+                </button>
+
+            </div>
+        `;
+
+        document
+            .getElementById("scan-device-music-error")
+            ?.addEventListener(
+                "click",
+                scanDeviceMusic
+            );
+    }
+}
+
+function renderDeviceMusic(songs) {
+
+    if (!deviceMusicList) return;
+
+    if (!songs.length) {
+
+        deviceMusicList.innerHTML = `
+            <div class="device-music-empty">
+
+                <div class="empty-icon">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+
+                <h3>NO MUSIC FOUND</h3>
+
+                <p>
+                    No music files were found on this device.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    deviceMusicList.innerHTML =
+        songs.map((song, index) => {
+
+            const title =
+                escapeHTML(
+                    song.title ||
+                    "Unknown Song"
+                );
+
+            const artist =
+                escapeHTML(
+                    song.artist ||
+                    "Unknown Artist"
+                );
+
+            const album =
+                escapeHTML(
+                    song.album ||
+                    "Unknown Album"
+                );
+
+            const artwork =
+                song.albumArtUri ||
+                "";
+
+            return `
+                <button
+                    class="device-song"
+                    data-device-index="${index}"
+                    type="button"
+                >
+
+                    <div class="device-song-art">
+
+                        ${artwork
+                    ? `
+                                <img
+                                    src="${artwork}"
+                                    alt=""
+                                >
+                            `
+                    : `
+                                <i class="fa-solid fa-music"></i>
+                            `
+                }
+
+                    </div>
+
+                    <div class="device-song-info">
+
+                        <strong>
+                            ${title}
+                        </strong>
+
+                        <span>
+                            ${artist}
+                        </span>
+
+                        <small>
+                            ${album}
+                        </small>
+
+                    </div>
+
+                    <i class="fa-solid fa-play"></i>
+
+                </button>
+            `;
+
+        }).join("");
+
+    document
+        .querySelectorAll(".device-song")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const index =
+                        Number(
+                            button.dataset.deviceIndex
+                        );
+
+                    playDeviceSong(
+                        deviceSongs[index]
+                    );
+                }
+            );
+
+        });
+}
+
+
+function playDeviceSong(deviceSong) {
+
+    if (!deviceSong || !deviceSong.uri) {
+        showToast("❌ Unable to play this song");
+        return;
+    }
+
+    // Check if this device song is already in the main playlist
+    let existingIndex = songs.findIndex(
+        song => song.deviceUri === deviceSong.uri
+    );
+
+    // If not, add it to the existing Aurora playlist
+    if (existingIndex === -1) {
+
+        songs.push({
+
+            id: `device-${deviceSong.id}`,
+
+            title:
+                deviceSong.title ||
+                "Unknown Song",
+
+            artist:
+                deviceSong.artist ||
+                "Unknown Artist",
+
+            cover:
+                deviceSong.albumArtUri ||
+                "./assets/images/default-cover.jpg",
+
+            src:
+                deviceSong.uri,
+
+            lrc: "",
+
+            duration:
+                formatDeviceDuration(
+                    deviceSong.duration
+                ),
+
+            favorite: false,
+
+            recent: true,
+
+            trending: false,
+
+            // Important: identify Android MediaStore songs
+            deviceUri:
+                deviceSong.uri
+
+        });
+
+        existingIndex =
+            songs.length - 1;
+    }
+
+    // Make the device song the current Aurora song
+    currentSong = existingIndex;
+
+    // Close Device Music panel
+    if (deviceMusicPanel) {
+        deviceMusicPanel.classList.remove("active");
+    }
+
+    // Make Player active
+    dockBtns.forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    if (dockBtns[0]) {
+        dockBtns[0].classList.add("active");
+    }
+
+    // Move dock indicator back to Player
+    if (dockPill) {
+        dockPill.style.transform =
+            "translateX(0px)";
+    }
+
+    // Play using existing Aurora player
+    playSong();
+}
+
+function formatDeviceDuration(milliseconds) {
+
+    const totalSeconds =
+        Math.floor(
+            Number(milliseconds || 0) / 1000
+        );
+
+    const minutes =
+        Math.floor(totalSeconds / 60);
+
+    const seconds =
+        totalSeconds % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+async function initDeviceMusic() {
+
+    if (!deviceMusicPanel) return;
+
+    // Scan button
+    scanDeviceMusicBtn?.addEventListener(
+        "click",
+        scanDeviceMusic
+    );
+
+    // Empty-state scan button
+    scanDeviceMusicEmptyBtn?.addEventListener(
+        "click",
+        scanDeviceMusic
+    );
+
+    // Search
+    const searchInput =
+        document.getElementById(
+            "device-music-search"
+        );
+
+    searchInput?.addEventListener(
+        "input",
+        () => {
+
+            const query =
+                searchInput.value
+                    .trim()
+                    .toLowerCase();
+
+            if (!query) {
+                renderDeviceMusic(deviceSongs);
+                return;
+            }
+
+            const filtered =
+                deviceSongs.filter(song => {
+
+                    const title =
+                        String(
+                            song.title || ""
+                        ).toLowerCase();
+
+                    const artist =
+                        String(
+                            song.artist || ""
+                        ).toLowerCase();
+
+                    const album =
+                        String(
+                            song.album || ""
+                        ).toLowerCase();
+
+                    return (
+                        title.includes(query) ||
+                        artist.includes(query) ||
+                        album.includes(query)
+                    );
+                });
+
+            renderDeviceMusic(filtered);
+        }
+    );
+}
+
+window.addEventListener(
+    "load",
+    () => {
+        initDeviceMusic();
+    }
+);
 
 
 

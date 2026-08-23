@@ -604,7 +604,10 @@
         
             </button>
 
-        
+            
+            
+
+
             <!--==================================
                             SETTINGS
             ===================================-->
@@ -620,6 +623,22 @@
                 <span>Settings</span>
                 
         
+            </button>
+
+            <!--==================================
+                        DEVICE MUSIC
+            ==================================-->
+            
+            <button class="dock-btn" data-panel="device-music">
+            
+                <div class="dock-icon">
+            
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+            
+                </div>
+            
+                <span>Device Music</span>
+            
             </button>
         
         </nav>
@@ -1502,8 +1521,7 @@
                     </div>
 
                 </section>
-                
-               
+                              
 
                 <button type="button" id="reset-app-data" class="reset-settings-btn">
                     🗑️ Reset App Data
@@ -1511,6 +1529,99 @@
             
             </div>
 
+        </div>
+
+
+        <!--==================================
+                    DEVICE MUSIC PANEL
+        ==================================-->
+        
+        <div id="device-music-panel" class="panel-screen">
+        
+            <button class="panel-close" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        
+            <div class="device-music-container">
+        
+                <!-- Header -->
+                <div class="device-music-header">
+        
+                    <div>
+                        <h2>
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            DEVICE MUSIC
+                        </h2>
+        
+                        <p>
+                            Aurora Local Media Engine
+                        </p>
+                    </div>
+        
+                    <button id="scan-device-music" type="button">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        SCAN DEVICE
+                    </button>
+        
+                </div>
+        
+        
+                <!-- Status -->
+                <div class="device-music-status">
+        
+                    <div class="status-icon">
+                        <i class="fa-solid fa-wave-square"></i>
+                    </div>
+        
+                    <div>
+                        <strong id="device-music-status">
+                            READY TO SCAN
+                        </strong>
+        
+                        <span id="device-music-count">
+                            No device songs loaded
+                        </span>
+                    </div>
+        
+                </div>
+        
+        
+                <!-- Search -->
+                <div class="device-music-search">
+        
+                    <i class="fa-solid fa-magnifying-glass"></i>
+        
+                    <input type="text" id="device-music-search" placeholder="Search device music..." autocomplete="off">
+        
+                </div>
+        
+        
+                <!-- Songs -->
+                <div id="device-music-list" class="device-music-list">
+        
+                    <div class="device-music-empty">
+        
+                        <div class="empty-icon">
+                            <i class="fa-solid fa-music"></i>
+                        </div>
+        
+                        <h3>NO DEVICE MUSIC</h3>
+        
+                        <p>
+                            Scan your phone to load local audio files.
+                        </p>
+        
+                        <button id="scan-device-music-empty" type="button">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            SCAN DEVICE MUSIC
+                        </button>
+        
+                    </div>
+        
+                </div>
+        
+            </div>
+        
         </div>
 
     </main>
