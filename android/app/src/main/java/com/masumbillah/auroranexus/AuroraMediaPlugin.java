@@ -5,7 +5,11 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Base64;
 import android.provider.MediaStore;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -49,7 +53,7 @@ public class AuroraMediaPlugin extends Plugin {
     public void getSongs(PluginCall call) {
 
         String permissionAlias =
-                getAudioPermissionAlias();
+            getAudioPermissionAlias();
 
         if (
             getPermissionState(permissionAlias)
@@ -74,7 +78,7 @@ public class AuroraMediaPlugin extends Plugin {
     ) {
 
         String permissionAlias =
-                getAudioPermissionAlias();
+            getAudioPermissionAlias();
 
         if (
             getPermissionState(permissionAlias)
@@ -96,33 +100,26 @@ public class AuroraMediaPlugin extends Plugin {
         JSArray songs = new JSArray();
 
         ContentResolver resolver =
-                getContext().getContentResolver();
+            getContext().getContentResolver();
 
         String[] projection = {
 
             MediaStore.Audio.Media._ID,
-
             MediaStore.Audio.Media.TITLE,
-
             MediaStore.Audio.Media.ARTIST,
-
             MediaStore.Audio.Media.ALBUM,
-
             MediaStore.Audio.Media.ALBUM_ID,
-
             MediaStore.Audio.Media.DURATION,
-
             MediaStore.Audio.Media.MIME_TYPE,
-
             MediaStore.Audio.Media.IS_MUSIC
         };
 
         String selection =
-                MediaStore.Audio.Media.IS_MUSIC + " != 0";
+            MediaStore.Audio.Media.IS_MUSIC + " != 0";
 
         String sortOrder =
-                MediaStore.Audio.Media.TITLE +
-                " COLLATE NOCASE ASC";
+            MediaStore.Audio.Media.TITLE +
+            " COLLATE NOCASE ASC";
 
         Uri collection;
 
@@ -272,26 +269,10 @@ public class AuroraMediaPlugin extends Plugin {
                     songUri.toString()
                 );
 
-                if (albumId > 0) {
-
-                    Uri artworkUri =
-                        Uri.parse(
-                            "content://media/external/audio/albumart/"
-                            + albumId
-                        );
-
-                    song.put(
-                        "albumArtUri",
-                        artworkUri.toString()
-                    );
-
-                } else {
-
-                    song.put(
-                        "albumArtUri",
-                        ""
-                    );
-                }
+                song.put(
+                    "albumArtUri",
+                    ""
+                );
 
                 songs.put(song);
             }
@@ -315,6 +296,112 @@ public class AuroraMediaPlugin extends Plugin {
 
             call.reject(
                 "Failed to scan device music: "
+                + error.getMessage()
+            );
+        }
+    }
+
+    /*
+     * =========================================
+     * GET DEVICE AUDIO / ARTWORK
+     * =========================================
+     */
+
+    @PluginMethod
+    public void getMediaData(PluginCall call) {
+
+        String uriString =
+            call.getString("uri");
+
+        String mimeType =
+            call.getString(
+                "mimeType",
+                "audio/*"
+            );
+
+        if (
+            uriString == null ||
+            uriString.isEmpty()
+        ) {
+
+            call.reject(
+                "Media URI is missing."
+            );
+
+            return;
+        }
+
+        try {
+
+            Uri uri =
+                Uri.parse(uriString);
+
+            ContentResolver resolver =
+                getContext().getContentResolver();
+
+            InputStream inputStream =
+                resolver.openInputStream(uri);
+
+            if (inputStream == null) {
+
+                call.reject(
+                    "Unable to open media."
+                );
+
+                return;
+            }
+
+            ByteArrayOutputStream output =
+                new ByteArrayOutputStream();
+
+            byte[] buffer =
+                new byte[8192];
+
+            int bytesRead;
+
+            while (
+                (bytesRead =
+                    inputStream.read(buffer))
+                    != -1
+            ) {
+
+                output.write(
+                    buffer,
+                    0,
+                    bytesRead
+                );
+            }
+
+            inputStream.close();
+
+            byte[] data =
+                output.toByteArray();
+
+            String base64 =
+                Base64.encodeToString(
+                    data,
+                    Base64.NO_WRAP
+                );
+
+            JSObject result =
+                new JSObject();
+
+            result.put(
+                "data",
+                base64
+            );
+
+            result.put(
+                "mimeType",
+                mimeType
+            );
+
+            call.resolve(result);
+
+        } catch (Exception error) {
+
+            call.reject(
+                "Unable to read media: "
                 + error.getMessage()
             );
         }
