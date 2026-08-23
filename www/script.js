@@ -6422,6 +6422,16 @@ let deviceSongs = [];
 
 async function scanDeviceMusic() {
 
+    if (
+        deviceSongs.length > 0
+    ) {
+        renderDeviceMusic(
+            deviceSongs.slice(0, 100)
+        );
+
+        return;
+    }
+    
     if (!deviceMusicList) return;
 
     deviceMusicStatus.textContent = "SCANNING...";
@@ -6464,7 +6474,9 @@ async function scanDeviceMusic() {
         deviceMusicCount.textContent =
             `${deviceSongs.length} song${deviceSongs.length === 1 ? "" : "s"} found`;
 
-        renderDeviceMusic(deviceSongs);
+        renderDeviceMusic(
+            deviceSongs.slice(0, 100)
+        );
 
     } catch (error) {
 
@@ -6561,9 +6573,7 @@ function renderDeviceMusic(songs) {
                     "Unknown Album"
                 );
 
-            const artwork =
-                song.albumArtUri ||
-                "";
+            const artwork = song.albumArtUri || "";
 
             return `
                 <button
@@ -6634,89 +6644,211 @@ function renderDeviceMusic(songs) {
 }
 
 
-function playDeviceSong(deviceSong) {
+/*---------------------------------------
+           Device Song Playback
+----------------------------------------*/
+async function playDeviceSong(deviceSong) {
 
     if (!deviceSong || !deviceSong.uri) {
+
         showToast("❌ Unable to play this song");
+
         return;
     }
 
-    // Check if this device song is already in the main playlist
-    let existingIndex = songs.findIndex(
-        song => song.deviceUri === deviceSong.uri
-    );
+    try {
 
-    // If not, add it to the existing Aurora playlist
-    if (existingIndex === -1) {
+        showToast("⏳ Loading song...");
 
-        songs.push({
+        const AuroraMedia =
+            window.Capacitor?.Plugins?.AuroraMedia;
 
-            id: `device-${deviceSong.id}`,
+        if (!AuroraMedia) {
 
-            title:
-                deviceSong.title ||
-                "Unknown Song",
+            throw new Error(
+                "AuroraMedia plugin unavailable."
+            );
+        }
 
-            artist:
-                deviceSong.artist ||
-                "Unknown Artist",
+        const result =
+            await AuroraMedia.getMediaData({
 
-            cover:
-                deviceSong.albumArtUri ||
-                "./assets/images/default-cover.jpg",
+                uri: deviceSong.uri,
 
-            src:
-                deviceSong.uri,
+                mimeType:
+                    deviceSong.mimeType ||
+                    "audio/mpeg"
+            });
 
-            lrc: "",
+        if (!result?.data) {
 
-            duration:
-                formatDeviceDuration(
-                    deviceSong.duration
-                ),
+            throw new Error(
+                "Audio data unavailable."
+            );
+        }
 
-            favorite: false,
+        const byteCharacters =
+            atob(result.data);
 
-            recent: true,
+        const byteNumbers =
+            new Uint8Array(
+                byteCharacters.length
+            );
 
-            trending: false,
+        for (
+            let i = 0;
+            i < byteCharacters.length;
+            i++
+        ) {
 
-            // Important: identify Android MediaStore songs
-            deviceUri:
-                deviceSong.uri
+            byteNumbers[i] =
+                byteCharacters.charCodeAt(i);
+        }
+
+        const blob =
+            new Blob(
+                [byteNumbers],
+                {
+                    type:
+                        result.mimeType ||
+                        deviceSong.mimeType ||
+                        "audio/mpeg"
+                }
+            );
+
+        const playableUrl =
+            URL.createObjectURL(blob);
+
+        let existingIndex =
+            songs.findIndex(
+                song =>
+                    song.deviceUri ===
+                    deviceSong.uri
+            );
+
+        if (existingIndex === -1) {
+
+            songs.push({
+
+                id:
+                    `device-${deviceSong.id}`,
+
+                title:
+                    deviceSong.title ||
+                    "Unknown Song",
+
+                artist:
+                    deviceSong.artist ||
+                    "Unknown Artist",
+
+                cover:
+                    "",
+
+                src:
+                    playableUrl,
+
+                lrc:
+                    "",
+
+                duration:
+                    formatDeviceDuration(
+                        deviceSong.duration
+                    ),
+
+                favorite:
+                    false,
+
+                recent:
+                    true,
+
+                trending:
+                    false,
+
+                deviceUri:
+                    deviceSong.uri,
+
+                deviceMimeType:
+                    deviceSong.mimeType
+            });
+
+            existingIndex =
+                songs.length - 1;
+
+        } else {
+
+            songs[existingIndex].src =
+                playableUrl;
+        }
+
+        currentSong =
+            existingIndex;
+
+        /*
+         * PLAYER UI
+         */
+
+        if (deviceMusicPanel) {
+
+            deviceMusicPanel.classList.remove(
+                "active"
+            );
+        }
+
+        dockBtns.forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
 
         });
 
-        existingIndex =
-            songs.length - 1;
+        if (dockBtns[0]) {
+
+            dockBtns[0].classList.add(
+                "active"
+            );
+        }
+
+        if (dockPill) {
+
+            dockPill.style.transform =
+                "translateX(0px)";
+        }
+
+        /*
+         * COVER
+         */
+
+        albumCover.src =
+            "./assets/images/default-cover.jpg";
+
+        /*
+         * PLAY
+         */
+
+        await playSong();
+
+        showToast(
+            "🎵 Playing " +
+            (deviceSong.title ||
+                "Device Song")
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Device song playback error:",
+            error
+        );
+
+        showToast(
+            "❌ Unable to play device song"
+        );
     }
-
-    // Make the device song the current Aurora song
-    currentSong = existingIndex;
-
-    // Close Device Music panel
-    if (deviceMusicPanel) {
-        deviceMusicPanel.classList.remove("active");
-    }
-
-    // Make Player active
-    dockBtns.forEach(btn => {
-        btn.classList.remove("active");
-    });
-
-    if (dockBtns[0]) {
-        dockBtns[0].classList.add("active");
-    }
-
-    // Move dock indicator back to Player
-    if (dockPill) {
-        dockPill.style.transform =
-            "translateX(0px)";
-    }
-
-    // Play using existing Aurora player
-    playSong();
 }
+
+
+
 
 function formatDeviceDuration(milliseconds) {
 
