@@ -5,8 +5,8 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Base64;
 import android.provider.MediaStore;
+import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -253,6 +253,11 @@ public class AuroraMediaPlugin extends Plugin {
                 );
 
                 song.put(
+                    "albumId",
+                    albumId
+                );
+
+                song.put(
                     "duration",
                     duration
                 );
@@ -269,10 +274,26 @@ public class AuroraMediaPlugin extends Plugin {
                     songUri.toString()
                 );
 
-                song.put(
-                    "albumArtUri",
-                    ""
-                );
+                if (albumId > 0) {
+
+                    Uri artworkUri =
+                        Uri.parse(
+                            "content://media/external/audio/albumart/"
+                            + albumId
+                        );
+
+                    song.put(
+                        "albumArtUri",
+                        artworkUri.toString()
+                    );
+
+                } else {
+
+                    song.put(
+                        "albumArtUri",
+                        ""
+                    );
+                }
 
                 songs.put(song);
             }
@@ -301,13 +322,11 @@ public class AuroraMediaPlugin extends Plugin {
         }
     }
 
-<<<<<<< HEAD
     /*
-     * =========================================
-     * GET DEVICE AUDIO / ARTWORK
-     * =========================================
-     */
-
+    * =========================================
+    * GET DEVICE AUDIO / ARTWORK
+    * =========================================
+    */
     @PluginMethod
     public void getMediaData(PluginCall call) {
 
@@ -324,41 +343,21 @@ public class AuroraMediaPlugin extends Plugin {
             uriString == null ||
             uriString.isEmpty()
         ) {
-
             call.reject(
                 "Media URI is missing."
             );
 
-=======
-    @PluginMethod
-    public void getMediaData(PluginCall call) {
-
-        String uriString = call.getString("uri");
-
-        String mimeType = call.getString(
-            "mimeType",
-            "audio/mpeg"
-        );
-
-        if (uriString == null || uriString.isEmpty()) {
-            call.reject("Media URI is missing.");
->>>>>>> 085efc7 (Update Aurora Device Music UI)
             return;
         }
 
         try {
 
-<<<<<<< HEAD
             Uri uri =
                 Uri.parse(uriString);
-=======
-            Uri uri = Uri.parse(uriString);
->>>>>>> 085efc7 (Update Aurora Device Music UI)
 
             ContentResolver resolver =
                 getContext().getContentResolver();
 
-<<<<<<< HEAD
             InputStream inputStream =
                 resolver.openInputStream(uri);
 
@@ -376,31 +375,13 @@ public class AuroraMediaPlugin extends Plugin {
 
             byte[] buffer =
                 new byte[8192];
-=======
-            java.io.InputStream inputStream =
-                resolver.openInputStream(uri);
-
-            if (inputStream == null) {
-                call.reject("Unable to open media.");
-                return;
-            }
-
-            java.io.ByteArrayOutputStream output =
-                new java.io.ByteArrayOutputStream();
-
-            byte[] buffer = new byte[8192];
->>>>>>> 085efc7 (Update Aurora Device Music UI)
 
             int bytesRead;
 
             while (
-<<<<<<< HEAD
                 (bytesRead =
                     inputStream.read(buffer))
                     != -1
-=======
-                (bytesRead = inputStream.read(buffer)) != -1
->>>>>>> 085efc7 (Update Aurora Device Music UI)
             ) {
 
                 output.write(
@@ -412,13 +393,9 @@ public class AuroraMediaPlugin extends Plugin {
 
             inputStream.close();
 
-<<<<<<< HEAD
-            byte[] data =
-                output.toByteArray();
-
             String base64 =
                 Base64.encodeToString(
-                    data,
+                    output.toByteArray(),
                     Base64.NO_WRAP
                 );
 
@@ -429,17 +406,6 @@ public class AuroraMediaPlugin extends Plugin {
                 "data",
                 base64
             );
-=======
-            String base64 =
-                android.util.Base64.encodeToString(
-                    output.toByteArray(),
-                    android.util.Base64.NO_WRAP
-                );
-
-            JSObject result = new JSObject();
-
-            result.put("data", base64);
->>>>>>> 085efc7 (Update Aurora Device Music UI)
 
             result.put(
                 "mimeType",
@@ -456,31 +422,41 @@ public class AuroraMediaPlugin extends Plugin {
             );
         }
     }
-
+    /*
+     * =========================================
+     * GET ALBUM ART
+     * =========================================
+     */
     @PluginMethod
     public void getAlbumArt(PluginCall call) {
 
         String albumId =
             call.getString("albumId");
 
-        if (albumId == null || albumId.isEmpty()) {
+        if (
+            albumId == null ||
+            albumId.isEmpty()
+        ) {
 
-            call.reject("Album ID is missing.");
+            call.reject(
+                "Album ID is missing."
+            );
 
             return;
         }
 
         try {
 
-            Uri artworkUri = Uri.parse(
-                "content://media/external/audio/albumart/"
-                + albumId
-            );
+            Uri artworkUri =
+                Uri.parse(
+                    "content://media/external/audio/albumart/"
+                    + albumId
+                );
 
             ContentResolver resolver =
                 getContext().getContentResolver();
 
-            java.io.InputStream inputStream =
+            InputStream inputStream =
                 resolver.openInputStream(
                     artworkUri
                 );
@@ -494,15 +470,18 @@ public class AuroraMediaPlugin extends Plugin {
                 return;
             }
 
-            java.io.ByteArrayOutputStream output =
-                new java.io.ByteArrayOutputStream();
+            ByteArrayOutputStream output =
+                new ByteArrayOutputStream();
 
-            byte[] buffer = new byte[4096];
+            byte[] buffer =
+                new byte[4096];
 
             int bytesRead;
 
             while (
-                (bytesRead = inputStream.read(buffer)) != -1
+                (bytesRead =
+                    inputStream.read(buffer))
+                    != -1
             ) {
 
                 output.write(
@@ -515,15 +494,23 @@ public class AuroraMediaPlugin extends Plugin {
             inputStream.close();
 
             String base64 =
-                android.util.Base64.encodeToString(
+                Base64.encodeToString(
                     output.toByteArray(),
-                    android.util.Base64.NO_WRAP
+                    Base64.NO_WRAP
                 );
 
-            JSObject result = new JSObject();
+            JSObject result =
+                new JSObject();
 
-            result.put("data", base64);
-            result.put("mimeType", "image/jpeg");
+            result.put(
+                "data",
+                base64
+            );
+
+            result.put(
+                "mimeType",
+                "image/jpeg"
+            );
 
             call.resolve(result);
 
@@ -535,5 +522,4 @@ public class AuroraMediaPlugin extends Plugin {
             );
         }
     }
-
 }
