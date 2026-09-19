@@ -3030,35 +3030,24 @@ dockBtns.forEach((btn, index) => {
         dockPill.style.transform =
             `translateX(${btn.offsetLeft}px)`;
 
-        switch (index) {
+        const panel = btn.dataset.panel;
 
-            case 0:
-                // Player
-                break;
+        if (panel === "equalizer") {
+            equalizerPanel?.classList.add("active");
+        } else if (panel === "ai") {
+            aiPanelScreen?.classList.add("active");
+        } else if (panel === "settings") {
+            settingsPanel?.classList.add("active");
+        } else if (panel === "device-music") {
+            deviceMusicPanel?.classList.add("active");
 
-            case 1:
-                equalizerPanel.classList.add("active");
-                break;
-
-            case 2:
-                aiPanelScreen.classList.add("active");
-                break;
-
-            case 3:
-                settingsPanel.classList.add("active");
-                break;
-            case 4:
-                // Device Music
-                if (deviceMusicPanel) {
-                    deviceMusicPanel.classList.add("active");
-                }
-
-                if (typeof scanDeviceMusic === "function") {
-                    scanDeviceMusic();
-                }
-
-                break;
-
+            // Reuse the cached device library instead of rescanning
+            // every time the panel is opened.
+            if (deviceSongs.length > 0) {
+                renderDeviceMusic(deviceSongs.slice(0, 100));
+            } else {
+                scanDeviceMusic();
+            }
         }
 
     });
