@@ -6769,6 +6769,31 @@ function renderDeviceMusic(songs) {
 /*---------------------------------------
            Device Song Playback
 ----------------------------------------*/
+async function base64AudioToBlob(base64, mimeType) {
+    const sliceSize = 512 * 1024;
+    const byteArrays = [];
+
+    for (let offset = 0; offset < base64.length; offset += sliceSize) {
+        const slice = base64.slice(offset, offset + sliceSize);
+        const byteCharacters = atob(slice);
+        const bytes = new Uint8Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            bytes[i] = byteCharacters.charCodeAt(i);
+        }
+
+        byteArrays.push(bytes);
+
+        // Yield between chunks so large local tracks do not freeze the UI.
+        await new Promise(resolve => setTimeout(resolve, 0));
+    }
+
+    return new Blob(byteArrays, {
+        type: mimeType || "audio/mpeg"
+    });
+}
+
+
 async function playDeviceSong(deviceSong) {
 
     if (!deviceSong || !deviceSong.uri) {
@@ -6810,32 +6835,12 @@ async function playDeviceSong(deviceSong) {
                 );
             }
 
-            const byteCharacters =
-                atob(result.data);
-
-            const byteNumbers =
-                new Uint8Array(
-                    byteCharacters.length
-                );
-
-            for (
-                let i = 0;
-                i < byteCharacters.length;
-                i++
-            ) {
-                byteNumbers[i] =
-                    byteCharacters.charCodeAt(i);
-            }
-
             const blob =
-                new Blob(
-                    [byteNumbers],
-                    {
-                        type:
-                            result.mimeType ||
-                            deviceSong.mimeType ||
-                            "audio/mpeg"
-                    }
+                await base64AudioToBlob(
+                    result.data,
+                    result.mimeType ||
+                        deviceSong.mimeType ||
+                        "audio/mpeg"
                 );
 
             playableUrl =
@@ -7033,7 +7038,12 @@ async function initDeviceMusic() {
                     .toLowerCase();
 
             if (!query) {
-                renderDeviceMusic(deviceSongs);
+                renderDeviceMusic(
+                    deviceSongs.slice(
+                        0,
+                        DEVICE_MUSIC_RENDER_LIMIT
+                    )
+                );
                 return;
             }
 
