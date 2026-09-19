@@ -7345,3 +7345,47 @@ position: fixed;
         height: 34px;
     }
 }
+
+/* =========================================================
+   PERFORMANCE & ACCESSIBILITY
+   Keep Aurora's visual identity while reducing GPU work on
+   mobile devices and for users who prefer reduced motion.
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .background-glow {
+        width: 300px;
+        height: 300px;
+        filter: blur(100px);
+        opacity: .24;
+        animation-duration: 24s;
+    }
+
+    .background-grid {
+        background-size: 55px 55px;
+    }
+
+    .device-song,
+    .device-song > i {
+        transition-duration: .12s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+
+    .background-glow {
+        animation: none !important;
+    }
+}
