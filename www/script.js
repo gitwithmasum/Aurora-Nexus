@@ -98,8 +98,6 @@ const toast =
 const toastMessage =
     document.getElementById("toast-message");
 
-//const memoryMessage =
-    //document.getElementById("memory-message");
 
 const queueList =
     document.getElementById("queue-list");
@@ -117,9 +115,7 @@ const searchSong = document.getElementById("search-song");
 const eqSliders =
     document.querySelectorAll(".eq-slider");
 
-//const presetButtons = document.querySelectorAll(".preset-btn");
 
-//const navBtns = document.querySelectorAll(".nav-btn");
 
 const equalizerPanel =
     document.getElementById("equalizer-panel");
