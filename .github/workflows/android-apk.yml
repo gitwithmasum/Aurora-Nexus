@@ -47,6 +47,11 @@ jobs:
         run: |
           chmod +x android/gradlew
 
+      - name: Compile Android Java
+        working-directory: android
+        run: |
+          ./gradlew :app:compileDebugJavaWithJavac --no-daemon
+
       - name: Build Aurora Nexus APK
         working-directory: android
         run: |
