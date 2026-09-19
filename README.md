@@ -118,7 +118,9 @@ Aurora Nexus
 │   ├── index.html
 │   ├── style.css
 │   ├── script.js
-│   └── device-library.js
+│   └── assets/
+│       ├── images/
+│       └── music/
 │
 ├── android/
 │   └── app/
@@ -130,11 +132,8 @@ Aurora Nexus
 │                           └── auroranexus/
 │                               └── AuroraMediaPlugin.java
 │
-├── assets/
-│   ├── images/
-│   ├── music/
-│   ├── icons/
-│   └── fonts/
+├── resources/
+│   └── Android app icon/source assets
 │
 └── README.md
 ```
@@ -244,19 +243,13 @@ cd Aurora-Nexus
 npm install
 ```
 
-## 4. Build the web application
-
-```bash
-npm run build
-```
-
-## 5. Sync Capacitor
+## 4. Sync Capacitor
 
 ```bash
 npx cap sync android
 ```
 
-## 6. Build Android
+## 5. Build Android
 
 ```bash
 cd android
@@ -273,21 +266,9 @@ On Windows:
 
 # 🧪 Development
 
-For web development:
+For web development, serve the `www/` directory with a local development server.
 
-```bash
-npm run dev
-```
-
-or use a local development server.
-
-For Android development:
-
-```bash
-npx cap open android
-```
-
-This requires Android Studio or another Android development environment capable of opening the generated Android project.
+For Android builds, this repository includes a GitHub Actions workflow. It builds the debug APK automatically for pull requests and pushes to `main`, and it can also be started manually with `workflow_dispatch`.
 
 ---
 
@@ -324,8 +305,8 @@ A typical song object can contain:
     title: "Believer",
     artist: "Imagine Dragons",
     album: "Evolve",
-    src: "assets/music/believer.mp3",
-    cover: "assets/images/believer.jpg"
+    src: "www/assets/music/believer.mp3",
+    cover: "www/assets/images/believer.jpg"
 }
 ```
 

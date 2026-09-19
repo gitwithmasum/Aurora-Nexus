@@ -98,8 +98,6 @@ const toast =
 const toastMessage =
     document.getElementById("toast-message");
 
-//const memoryMessage =
-    //document.getElementById("memory-message");
 
 const queueList =
     document.getElementById("queue-list");
@@ -117,9 +115,7 @@ const searchSong = document.getElementById("search-song");
 const eqSliders =
     document.querySelectorAll(".eq-slider");
 
-//const presetButtons = document.querySelectorAll(".preset-btn");
 
-//const navBtns = document.querySelectorAll(".nav-btn");
 
 const equalizerPanel =
     document.getElementById("equalizer-panel");
@@ -2224,13 +2220,29 @@ document.addEventListener("keydown", (e) => {
 });
 
 
+/* Pause expensive canvas work while the app is backgrounded. */
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        player?.classList.remove("beat");
+    }
+});
+
+
 /*====================================
         DRAW VISUALIZER
 =====================================*/
 
 function drawVisualizer() {
 
-    requestAnimationFrame(drawVisualizer);
+    animationId = requestAnimationFrame(drawVisualizer);
+
+    if (
+        document.hidden ||
+        !isPlaying ||
+        !analyser
+    ) {
+        return;
+    }
 
     analyser.getByteFrequencyData(dataArray);
 
@@ -3030,35 +3042,24 @@ dockBtns.forEach((btn, index) => {
         dockPill.style.transform =
             `translateX(${btn.offsetLeft}px)`;
 
-        switch (index) {
+        const panel = btn.dataset.panel;
 
-            case 0:
-                // Player
-                break;
+        if (panel === "equalizer") {
+            equalizerPanel?.classList.add("active");
+        } else if (panel === "ai") {
+            aiPanelScreen?.classList.add("active");
+        } else if (panel === "settings") {
+            settingsPanel?.classList.add("active");
+        } else if (panel === "device-music") {
+            deviceMusicPanel?.classList.add("active");
 
-            case 1:
-                equalizerPanel.classList.add("active");
-                break;
-
-            case 2:
-                aiPanelScreen.classList.add("active");
-                break;
-
-            case 3:
-                settingsPanel.classList.add("active");
-                break;
-            case 4:
-                // Device Music
-                if (deviceMusicPanel) {
-                    deviceMusicPanel.classList.add("active");
-                }
-
-                if (typeof scanDeviceMusic === "function") {
-                    scanDeviceMusic();
-                }
-
-                break;
-
+            // Reuse the cached device library instead of rescanning
+            // every time the panel is opened.
+            if (deviceSongs.length > 0) {
+                renderDeviceMusic(deviceSongs.slice(0, DEVICE_MUSIC_RENDER_LIMIT));
+            } else {
+                scanDeviceMusic();
+            }
         }
 
     });
@@ -3189,8 +3190,14 @@ function drawEQWave() {
     eqAnimationId =
         requestAnimationFrame(drawEQWave);
 
-
-    if (!analyser) return;
+    if (
+        document.hidden ||
+        !isPlaying ||
+        !analyser ||
+        !equalizerPanel?.classList.contains("active")
+    ) {
+        return;
+    }
 
 
     const width =
@@ -3448,12 +3455,16 @@ for (let i = 0; i < 80; i++) {
 function drawCircleSpectrum() {
 
     requestAnimationFrame(
-
         drawCircleSpectrum
-
     );
 
-    if (!analyser) return;
+    if (
+        document.hidden ||
+        !isPlaying ||
+        !analyser
+    ) {
+        return;
+    }
 
     analyser.getByteFrequencyData(dataArray);
 
@@ -6419,15 +6430,61 @@ function escapeHTML(value) {
 }
 
 let deviceSongs = [];
+const DEVICE_MUSIC_RENDER_LIMIT = 100;
+const deviceAudioUrlCache = new Map();
+const deviceAlbumArtCache = new Map();
+
+async function loadDeviceAlbumArt(song, img) {
+    if (!song?.albumId || !img) return;
+
+    const key = String(song.albumId);
+
+    if (deviceAlbumArtCache.has(key)) {
+        img.src = deviceAlbumArtCache.get(key);
+        return;
+    }
+
+    try {
+        const AuroraMedia =
+            window.Capacitor?.Plugins?.AuroraMedia;
+
+        if (!AuroraMedia?.getAlbumArt) return;
+
+        const result =
+            await AuroraMedia.getAlbumArt({
+                albumId: key
+            });
+
+        if (!result?.data) return;
+
+        const dataUrl =
+            `data:${result.mimeType || "image/jpeg"};base64,${result.data}`;
+
+        deviceAlbumArtCache.set(key, dataUrl);
+        img.src = dataUrl;
+    } catch (error) {
+        // Many local tracks do not contain artwork. Keep the fallback icon.
+        img.removeAttribute("src");
+        img.hidden = true;
+        img.nextElementSibling?.removeAttribute("hidden");
+    }
+}
+
+function revokeDeviceAudioUrlsExcept(activeUri) {
+    for (const [uri, url] of deviceAudioUrlCache.entries()) {
+        if (uri !== activeUri) {
+            URL.revokeObjectURL(url);
+            deviceAudioUrlCache.delete(uri);
+        }
+    }
+}
 
 async function scanDeviceMusic() {
 
     if (
         deviceSongs.length > 0
     ) {
-        renderDeviceMusic(
-            deviceSongs.slice(0, 100)
-        );
+        renderDeviceMusic(deviceSongs.slice(0, DEVICE_MUSIC_RENDER_LIMIT));
 
         return;
     }
@@ -6474,9 +6531,7 @@ async function scanDeviceMusic() {
         deviceMusicCount.textContent =
             `${deviceSongs.length} song${deviceSongs.length === 1 ? "" : "s"} found`;
 
-        renderDeviceMusic(
-            deviceSongs.slice(0, 100)
-        );
+        renderDeviceMusic(deviceSongs.slice(0, DEVICE_MUSIC_RENDER_LIMIT));
 
     } catch (error) {
 
@@ -6573,8 +6628,6 @@ function renderDeviceMusic(songs) {
                     "Unknown Album"
                 );
 
-            const artwork = song.albumArtUri || "";
-
             return `
                 <button
                     class="device-song"
@@ -6583,19 +6636,14 @@ function renderDeviceMusic(songs) {
                 >
 
                     <div class="device-song-art">
-
-                        ${artwork
-                    ? `
-                                <img
-                                    src="${artwork}"
-                                    alt=""
-                                >
-                            `
-                    : `
-                                <i class="fa-solid fa-music"></i>
-                            `
-                }
-
+                        <img
+                            class="device-album-art"
+                            data-album-id="${escapeHTML(song.albumId || "")}"
+                            alt=""
+                            loading="lazy"
+                            hidden
+                        >
+                        <i class="fa-solid fa-music"></i>
                     </div>
 
                     <div class="device-song-info">
@@ -6620,6 +6668,25 @@ function renderDeviceMusic(songs) {
             `;
 
         }).join("");
+
+    document
+        .querySelectorAll(".device-album-art")
+        .forEach((img, index) => {
+            const song = songs[index];
+
+            if (!song?.albumId) return;
+
+            img.nextElementSibling?.setAttribute("hidden", "");
+
+            loadDeviceAlbumArt(song, img)
+                .then(() => {
+                    if (img.src) {
+                        img.hidden = false;
+                    } else {
+                        img.nextElementSibling?.removeAttribute("hidden");
+                    }
+                });
+        });
 
     document
         .querySelectorAll(".device-song")
@@ -6670,54 +6737,67 @@ async function playDeviceSong(deviceSong) {
             );
         }
 
-        const result =
-            await AuroraMedia.getMediaData({
+        let playableUrl =
+            deviceAudioUrlCache.get(deviceSong.uri);
 
-                uri: deviceSong.uri,
-
-                mimeType:
-                    deviceSong.mimeType ||
-                    "audio/mpeg"
-            });
-
-        if (!result?.data) {
-
-            throw new Error(
-                "Audio data unavailable."
-            );
-        }
-
-        const byteCharacters =
-            atob(result.data);
-
-        const byteNumbers =
-            new Uint8Array(
-                byteCharacters.length
-            );
-
-        for (
-            let i = 0;
-            i < byteCharacters.length;
-            i++
-        ) {
-
-            byteNumbers[i] =
-                byteCharacters.charCodeAt(i);
-        }
-
-        const blob =
-            new Blob(
-                [byteNumbers],
-                {
-                    type:
-                        result.mimeType ||
+        if (!playableUrl) {
+            const result =
+                await AuroraMedia.getMediaData({
+                    uri: deviceSong.uri,
+                    mimeType:
                         deviceSong.mimeType ||
                         "audio/mpeg"
-                }
+                });
+
+            if (!result?.data) {
+                throw new Error(
+                    "Audio data unavailable."
+                );
+            }
+
+            const byteCharacters =
+                atob(result.data);
+
+            const byteNumbers =
+                new Uint8Array(
+                    byteCharacters.length
+                );
+
+            for (
+                let i = 0;
+                i < byteCharacters.length;
+                i++
+            ) {
+                byteNumbers[i] =
+                    byteCharacters.charCodeAt(i);
+            }
+
+            const blob =
+                new Blob(
+                    [byteNumbers],
+                    {
+                        type:
+                            result.mimeType ||
+                            deviceSong.mimeType ||
+                            "audio/mpeg"
+                    }
+                );
+
+            playableUrl =
+                URL.createObjectURL(blob);
+
+            // Keep only the current local track in memory. This prevents
+            // large base64-decoded songs from accumulating and slowing
+            // down the WebView after several plays.
+            revokeDeviceAudioUrlsExcept(
+                deviceSong.uri
             );
 
-        const playableUrl =
-            URL.createObjectURL(blob);
+            deviceAudioUrlCache.set(
+                deviceSong.uri,
+                playableUrl
+            );
+        }
 
         let existingIndex =
             songs.findIndex(
@@ -6927,7 +7007,7 @@ async function initDeviceMusic() {
                     );
                 });
 
-            renderDeviceMusic(filtered);
+            renderDeviceMusic(filtered.slice(0, DEVICE_MUSIC_RENDER_LIMIT));
         }
     );
 }
