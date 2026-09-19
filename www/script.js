@@ -6433,6 +6433,19 @@ let deviceSongs = [];
 const DEVICE_MUSIC_RENDER_LIMIT = 100;
 const deviceAudioUrlCache = new Map();
 const deviceAlbumArtCache = new Map();
+const deviceAlbumArtUnavailable = new Set();
+let deviceAlbumArtObserver = null;
+
+function trimDeviceAlbumArtCache() {
+    const maxEntries = 40;
+
+    while (deviceAlbumArtCache.size > maxEntries) {
+        const oldestKey =
+            deviceAlbumArtCache.keys().next().value;
+
+        deviceAlbumArtCache.delete(oldestKey);
+    }
+}
 
 async function loadDeviceAlbumArt(song, img) {
     if (!song?.albumId || !img) return;
@@ -6441,6 +6454,10 @@ async function loadDeviceAlbumArt(song, img) {
 
     if (deviceAlbumArtCache.has(key)) {
         img.src = deviceAlbumArtCache.get(key);
+        return;
+    }
+
+    if (deviceAlbumArtUnavailable.has(key)) {
         return;
     }
 
@@ -6461,8 +6478,10 @@ async function loadDeviceAlbumArt(song, img) {
             `data:${result.mimeType || "image/jpeg"};base64,${result.data}`;
 
         deviceAlbumArtCache.set(key, dataUrl);
+        trimDeviceAlbumArtCache();
         img.src = dataUrl;
     } catch (error) {
+        deviceAlbumArtUnavailable.add(key);
         // Many local tracks do not contain artwork. Keep the fallback icon.
         img.removeAttribute("src");
         img.hidden = true;
@@ -6669,6 +6688,39 @@ function renderDeviceMusic(songs) {
 
         }).join("");
 
+    deviceAlbumArtObserver?.disconnect();
+
+    deviceAlbumArtObserver =
+        "IntersectionObserver" in window
+            ? new IntersectionObserver(
+                entries => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) return;
+
+                        const img = entry.target;
+                        const index =
+                            Number(img.dataset.deviceIndex);
+                        const song = songs[index];
+
+                        deviceAlbumArtObserver?.unobserve(img);
+
+                        if (!song?.albumId) return;
+
+                        loadDeviceAlbumArt(song, img)
+                            .then(() => {
+                                if (img.src) {
+                                    img.hidden = false;
+                                    img.nextElementSibling?.setAttribute("hidden", "");
+                                } else {
+                                    img.nextElementSibling?.removeAttribute("hidden");
+                                }
+                            });
+                    });
+                },
+                { rootMargin: "200px 0px" }
+            )
+            : null;
+
     document
         .querySelectorAll(".device-album-art")
         .forEach((img, index) => {
@@ -6676,16 +6728,19 @@ function renderDeviceMusic(songs) {
 
             if (!song?.albumId) return;
 
-            img.nextElementSibling?.setAttribute("hidden", "");
+            img.dataset.deviceIndex = String(index);
 
-            loadDeviceAlbumArt(song, img)
-                .then(() => {
-                    if (img.src) {
-                        img.hidden = false;
-                    } else {
-                        img.nextElementSibling?.removeAttribute("hidden");
-                    }
-                });
+            if (deviceAlbumArtObserver) {
+                deviceAlbumArtObserver.observe(img);
+            } else {
+                loadDeviceAlbumArt(song, img)
+                    .then(() => {
+                        if (img.src) {
+                            img.hidden = false;
+                            img.nextElementSibling?.setAttribute("hidden", "");
+                        }
+                    });
+            }
         });
 
     document
