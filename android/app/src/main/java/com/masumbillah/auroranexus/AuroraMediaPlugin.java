@@ -9,6 +9,8 @@ import android.provider.MediaStore;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import com.getcapacitor.JSArray;
@@ -327,6 +329,76 @@ public class AuroraMediaPlugin extends Plugin {
     * GET DEVICE AUDIO / ARTWORK
     * =========================================
     */
+    @PluginMethod
+    public void prepareMediaFile(PluginCall call) {
+        String uriString = call.getString("uri");
+
+        if (uriString == null || uriString.isEmpty()) {
+            call.reject("Media URI is missing.");
+            return;
+        }
+
+        try {
+            File cacheDir = new File(
+                getContext().getCacheDir(),
+                "aurora_device_music"
+            );
+
+            if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+                call.reject("Unable to create media cache.");
+                return;
+            }
+
+            String fileName =
+                "track_" + Integer.toHexString(uriString.hashCode()) + ".audio";
+
+            File target = new File(cacheDir, fileName);
+
+            if (!target.exists() || target.length() == 0) {
+                File[] cachedFiles = cacheDir.listFiles();
+
+                if (cachedFiles != null) {
+                    for (File cachedFile : cachedFiles) {
+                        if (!cachedFile.equals(target)) {
+                            cachedFile.delete();
+                        }
+                    }
+                }
+
+                ContentResolver resolver =
+                    getContext().getContentResolver();
+
+                try (
+                    InputStream input =
+                        resolver.openInputStream(Uri.parse(uriString));
+                    FileOutputStream output =
+                        new FileOutputStream(target)
+                ) {
+                    if (input == null) {
+                        call.reject("Unable to open media.");
+                        return;
+                    }
+
+                    byte[] buffer = new byte[64 * 1024];
+                    int bytesRead;
+
+                    while ((bytesRead = input.read(buffer)) != -1) {
+                        output.write(buffer, 0, bytesRead);
+                    }
+                }
+            }
+
+            JSObject result = new JSObject();
+            result.put("fileUri", Uri.fromFile(target).toString());
+            call.resolve(result);
+
+        } catch (Exception error) {
+            call.reject(
+                "Unable to prepare media: " + error.getMessage()
+            );
+        }
+    }
+
     @PluginMethod
     public void getMediaData(PluginCall call) {
 
