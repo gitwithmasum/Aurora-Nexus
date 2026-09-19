@@ -6821,34 +6821,30 @@ async function playDeviceSong(deviceSong) {
             deviceAudioUrlCache.get(deviceSong.uri);
 
         if (!playableUrl) {
-            const result =
-                await AuroraMedia.getMediaData({
-                    uri: deviceSong.uri,
-                    mimeType:
-                        deviceSong.mimeType ||
-                        "audio/mpeg"
-                });
-
-            if (!result?.data) {
+            if (!AuroraMedia.prepareMediaFile) {
                 throw new Error(
-                    "Audio data unavailable."
+                    "Native media streaming is unavailable."
                 );
             }
 
-            const blob =
-                await base64AudioToBlob(
-                    result.data,
-                    result.mimeType ||
-                        deviceSong.mimeType ||
-                        "audio/mpeg"
+            const result =
+                await AuroraMedia.prepareMediaFile({
+                    uri: deviceSong.uri
+                });
+
+            if (!result?.fileUri) {
+                throw new Error(
+                    "Prepared media file is unavailable."
                 );
+            }
 
             playableUrl =
-                URL.createObjectURL(blob);
+                window.Capacitor?.convertFileSrc
+                    ? window.Capacitor.convertFileSrc(
+                        result.fileUri
+                    )
+                    : result.fileUri;
 
-            // Keep only the current local track in memory. This prevents
-            // large base64-decoded songs from accumulating and slowing
-            // down the WebView after several plays.
             revokeDeviceAudioUrlsExcept(
                 deviceSong.uri
             );
