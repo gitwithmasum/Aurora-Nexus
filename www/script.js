@@ -3044,7 +3044,7 @@ dockBtns.forEach((btn, index) => {
             // Reuse the cached device library instead of rescanning
             // every time the panel is opened.
             if (deviceSongs.length > 0) {
-                renderDeviceMusic(deviceSongs.slice(0, 100));
+                renderDeviceMusic(deviceSongs.slice(0, DEVICE_MUSIC_RENDER_LIMIT));
             } else {
                 scanDeviceMusic();
             }
@@ -6408,15 +6408,24 @@ function escapeHTML(value) {
 }
 
 let deviceSongs = [];
+const DEVICE_MUSIC_RENDER_LIMIT = 100;
+const deviceAudioUrlCache = new Map();
+
+function revokeDeviceAudioUrlsExcept(activeUri) {
+    for (const [uri, url] of deviceAudioUrlCache.entries()) {
+        if (uri !== activeUri) {
+            URL.revokeObjectURL(url);
+            deviceAudioUrlCache.delete(uri);
+        }
+    }
+}
 
 async function scanDeviceMusic() {
 
     if (
         deviceSongs.length > 0
     ) {
-        renderDeviceMusic(
-            deviceSongs.slice(0, 100)
-        );
+        renderDeviceMusic(deviceSongs.slice(0, DEVICE_MUSIC_RENDER_LIMIT));
 
         return;
     }
@@ -6463,9 +6472,7 @@ async function scanDeviceMusic() {
         deviceMusicCount.textContent =
             `${deviceSongs.length} song${deviceSongs.length === 1 ? "" : "s"} found`;
 
-        renderDeviceMusic(
-            deviceSongs.slice(0, 100)
-        );
+        renderDeviceMusic(deviceSongs.slice(0, DEVICE_MUSIC_RENDER_LIMIT));
 
     } catch (error) {
 
@@ -6659,54 +6666,67 @@ async function playDeviceSong(deviceSong) {
             );
         }
 
-        const result =
-            await AuroraMedia.getMediaData({
+        let playableUrl =
+            deviceAudioUrlCache.get(deviceSong.uri);
 
-                uri: deviceSong.uri,
-
-                mimeType:
-                    deviceSong.mimeType ||
-                    "audio/mpeg"
-            });
-
-        if (!result?.data) {
-
-            throw new Error(
-                "Audio data unavailable."
-            );
-        }
-
-        const byteCharacters =
-            atob(result.data);
-
-        const byteNumbers =
-            new Uint8Array(
-                byteCharacters.length
-            );
-
-        for (
-            let i = 0;
-            i < byteCharacters.length;
-            i++
-        ) {
-
-            byteNumbers[i] =
-                byteCharacters.charCodeAt(i);
-        }
-
-        const blob =
-            new Blob(
-                [byteNumbers],
-                {
-                    type:
-                        result.mimeType ||
+        if (!playableUrl) {
+            const result =
+                await AuroraMedia.getMediaData({
+                    uri: deviceSong.uri,
+                    mimeType:
                         deviceSong.mimeType ||
                         "audio/mpeg"
-                }
+                });
+
+            if (!result?.data) {
+                throw new Error(
+                    "Audio data unavailable."
+                );
+            }
+
+            const byteCharacters =
+                atob(result.data);
+
+            const byteNumbers =
+                new Uint8Array(
+                    byteCharacters.length
+                );
+
+            for (
+                let i = 0;
+                i < byteCharacters.length;
+                i++
+            ) {
+                byteNumbers[i] =
+                    byteCharacters.charCodeAt(i);
+            }
+
+            const blob =
+                new Blob(
+                    [byteNumbers],
+                    {
+                        type:
+                            result.mimeType ||
+                            deviceSong.mimeType ||
+                            "audio/mpeg"
+                    }
+                );
+
+            playableUrl =
+                URL.createObjectURL(blob);
+
+            // Keep only the current local track in memory. This prevents
+            // large base64-decoded songs from accumulating and slowing
+            // down the WebView after several plays.
+            revokeDeviceAudioUrlsExcept(
+                deviceSong.uri
             );
 
-        const playableUrl =
-            URL.createObjectURL(blob);
+            deviceAudioUrlCache.set(
+                deviceSong.uri,
+                playableUrl
+            );
+        }
 
         let existingIndex =
             songs.findIndex(
@@ -6916,7 +6936,7 @@ async function initDeviceMusic() {
                     );
                 });
 
-            renderDeviceMusic(filtered);
+            renderDeviceMusic(filtered.slice(0, DEVICE_MUSIC_RENDER_LIMIT));
         }
     );
 }
