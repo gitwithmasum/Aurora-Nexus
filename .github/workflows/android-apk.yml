@@ -29,29 +29,6 @@ jobs:
         run: |
           npm install
 
-      - name: Copy device music bridge
-        run: |
-          cp device-library.js www/device-library.js
-
-      - name: Inject device music bridge
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path("www/index.html")
-          text = p.read_text(encoding="utf-8")
-
-          tag = '<script src="./device-library.js"></script>'
-
-          if tag not in text:
-              text = text.replace(
-                  "</body>",
-                  f"    {tag}\n</body>"
-              )
-
-          p.write_text(text, encoding="utf-8")
-          PY
-
       - name: Generate Android app icons
         run: |
           npx -y @capacitor/assets generate \
