@@ -6410,6 +6410,43 @@ function escapeHTML(value) {
 let deviceSongs = [];
 const DEVICE_MUSIC_RENDER_LIMIT = 100;
 const deviceAudioUrlCache = new Map();
+const deviceAlbumArtCache = new Map();
+
+async function loadDeviceAlbumArt(song, img) {
+    if (!song?.albumId || !img) return;
+
+    const key = String(song.albumId);
+
+    if (deviceAlbumArtCache.has(key)) {
+        img.src = deviceAlbumArtCache.get(key);
+        return;
+    }
+
+    try {
+        const AuroraMedia =
+            window.Capacitor?.Plugins?.AuroraMedia;
+
+        if (!AuroraMedia?.getAlbumArt) return;
+
+        const result =
+            await AuroraMedia.getAlbumArt({
+                albumId: key
+            });
+
+        if (!result?.data) return;
+
+        const dataUrl =
+            `data:${result.mimeType || "image/jpeg"};base64,${result.data}`;
+
+        deviceAlbumArtCache.set(key, dataUrl);
+        img.src = dataUrl;
+    } catch (error) {
+        // Many local tracks do not contain artwork. Keep the fallback icon.
+        img.removeAttribute("src");
+        img.hidden = true;
+        img.nextElementSibling?.removeAttribute("hidden");
+    }
+}
 
 function revokeDeviceAudioUrlsExcept(activeUri) {
     for (const [uri, url] of deviceAudioUrlCache.entries()) {
@@ -6569,8 +6606,6 @@ function renderDeviceMusic(songs) {
                     "Unknown Album"
                 );
 
-            const artwork = song.albumArtUri || "";
-
             return `
                 <button
                     class="device-song"
@@ -6579,19 +6614,14 @@ function renderDeviceMusic(songs) {
                 >
 
                     <div class="device-song-art">
-
-                        ${artwork
-                    ? `
-                                <img
-                                    src="${artwork}"
-                                    alt=""
-                                >
-                            `
-                    : `
-                                <i class="fa-solid fa-music"></i>
-                            `
-                }
-
+                        <img
+                            class="device-album-art"
+                            data-album-id="${escapeHTML(song.albumId || "")}"
+                            alt=""
+                            loading="lazy"
+                            hidden
+                        >
+                        <i class="fa-solid fa-music"></i>
                     </div>
 
                     <div class="device-song-info">
@@ -6616,6 +6646,25 @@ function renderDeviceMusic(songs) {
             `;
 
         }).join("");
+
+    document
+        .querySelectorAll(".device-album-art")
+        .forEach((img, index) => {
+            const song = songs[index];
+
+            if (!song?.albumId) return;
+
+            img.nextElementSibling?.setAttribute("hidden", "");
+
+            loadDeviceAlbumArt(song, img)
+                .then(() => {
+                    if (img.src) {
+                        img.hidden = false;
+                    } else {
+                        img.nextElementSibling?.removeAttribute("hidden");
+                    }
+                });
+        });
 
     document
         .querySelectorAll(".device-song")
