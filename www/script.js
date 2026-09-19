@@ -2224,13 +2224,29 @@ document.addEventListener("keydown", (e) => {
 });
 
 
+/* Pause expensive canvas work while the app is backgrounded. */
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        player?.classList.remove("beat");
+    }
+});
+
+
 /*====================================
         DRAW VISUALIZER
 =====================================*/
 
 function drawVisualizer() {
 
-    requestAnimationFrame(drawVisualizer);
+    animationId = requestAnimationFrame(drawVisualizer);
+
+    if (
+        document.hidden ||
+        !isPlaying ||
+        !analyser
+    ) {
+        return;
+    }
 
     analyser.getByteFrequencyData(dataArray);
 
@@ -3178,8 +3194,14 @@ function drawEQWave() {
     eqAnimationId =
         requestAnimationFrame(drawEQWave);
 
-
-    if (!analyser) return;
+    if (
+        document.hidden ||
+        !isPlaying ||
+        !analyser ||
+        !equalizerPanel?.classList.contains("active")
+    ) {
+        return;
+    }
 
 
     const width =
@@ -3437,12 +3459,16 @@ for (let i = 0; i < 80; i++) {
 function drawCircleSpectrum() {
 
     requestAnimationFrame(
-
         drawCircleSpectrum
-
     );
 
-    if (!analyser) return;
+    if (
+        document.hidden ||
+        !isPlaying ||
+        !analyser
+    ) {
+        return;
+    }
 
     analyser.getByteFrequencyData(dataArray);
 
