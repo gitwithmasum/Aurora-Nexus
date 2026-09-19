@@ -42,29 +42,6 @@ jobs:
         run: |
           npx cap sync android
 
-      - name: Add Android audio permissions
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path("android/app/src/main/AndroidManifest.xml")
-          text = p.read_text(encoding="utf-8")
-
-          permissions = [
-              '<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />',
-              '<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />'
-          ]
-
-          for permission in permissions:
-              if permission not in text:
-                  text = text.replace(
-                      "<application",
-                      permission + "\n\n    <application",
-                      1
-                  )
-
-          p.write_text(text, encoding="utf-8")
-          PY
 
       - name: Make Gradle executable
         run: |
