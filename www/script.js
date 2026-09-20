@@ -69,6 +69,34 @@ const canvas =
 const ctx =
     canvas.getContext("2d");
 
+const isNativeAndroid =
+    window.Capacitor?.getPlatform?.() === "android";
+
+const visualizerBarCount = isNativeAndroid ? 64 : 96;
+const circleBarCount = isNativeAndroid ? 48 : 96;
+
+let cachedThemeColors = {
+    accent: "#00F5FF",
+    accentLight: "#7C3AED",
+    accentDark: "#0EA5E9"
+};
+
+function refreshVisualizerTheme() {
+    const style = getComputedStyle(document.documentElement);
+    cachedThemeColors.accent =
+        style.getPropertyValue("--accent").trim() || "#00F5FF";
+    cachedThemeColors.accentLight =
+        style.getPropertyValue("--accent-light").trim() || "#7C3AED";
+    cachedThemeColors.accentDark =
+        style.getPropertyValue("--accent-dark").trim() || "#0EA5E9";
+}
+
+refreshVisualizerTheme();
+
+if (isNativeAndroid) {
+    document.documentElement.classList.add("android-performance");
+}
+
 const player =
     document.querySelector(".player");
 
@@ -2233,17 +2261,7 @@ function drawVisualizer() {
         THEME COLORS
     ==============================*/
 
-    const style =
-        getComputedStyle(document.documentElement);
-
-    const accent =
-        style.getPropertyValue("--accent").trim();
-
-    const accentLight =
-        style.getPropertyValue("--accent-light").trim();
-
-    const accentDark =
-        style.getPropertyValue("--accent-dark").trim();
+    const { accent, accentLight, accentDark } = cachedThemeColors;
 
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
@@ -2376,7 +2394,7 @@ function drawVisualizer() {
 
     const radius = 60;
 
-    const bars = 128;
+    const bars = visualizerBarCount;
 
     for (let i = 0; i < bars; i++) {
 
@@ -3402,7 +3420,8 @@ function drawCircleSpectrum() {
     if (
         document.hidden ||
         !isPlaying ||
-        !analyser
+        !analyser ||
+        !circleCanvas?.offsetParent
     ) {
         return;
     }
@@ -3604,7 +3623,7 @@ function drawCircleSpectrum() {
             360° Spectrum Bars
     ==============================*/
 
-    const totalBars = 128;
+    const totalBars = circleBarCount;
     for (let i = 0; i < totalBars; i++) {
 
         const value = dataArray[i];
@@ -7027,3 +7046,9 @@ window.addEventListener(
 
 
 
+
+
+/* Keep cached visualizer colors in sync without reading CSS every frame. */
+themePicker?.addEventListener("change", () => {
+    requestAnimationFrame(refreshVisualizerTheme);
+});
