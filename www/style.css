@@ -7389,3 +7389,46 @@ position: fixed;
         animation: none !important;
     }
 }
+
+
+/* =====================================================
+   ANDROID PERFORMANCE MODE
+   Keep the Aurora look while reducing costly WebView effects.
+===================================================== */
+.android-performance .app,
+.android-performance .queue-section,
+.android-performance .controls button {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.android-performance .background-glow {
+    filter: blur(90px);
+    opacity: .22;
+}
+
+.android-performance .app::before {
+    filter: blur(70px);
+}
+
+.android-performance .album-ring,
+.android-performance #volume-ring {
+    animation: none !important;
+}
+
+.android-performance .equalizer span {
+    box-shadow: 0 0 8px var(--accent);
+}
+
+.android-performance #album-cover,
+.android-performance #play,
+.android-performance #volume-knob {
+    box-shadow: 0 0 18px rgba(0, 245, 255, .28);
+}
+
+.android-performance .panel-screen:not(.active) *,
+.android-performance .panel-screen:not(.active)::before,
+.android-performance .panel-screen:not(.active)::after {
+    animation: none !important;
+    transition: none !important;
+}
