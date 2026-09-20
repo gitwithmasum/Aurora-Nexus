@@ -7432,3 +7432,111 @@ position: fixed;
     animation: none !important;
     transition: none !important;
 }
+
+
+/* =====================================================
+   PREMIUM PLAYER REDESIGN
+===================================================== */
+.app { max-width: 470px; padding: 22px 20px 140px; }
+.header { margin-bottom: 22px; }
+.header .logo { width: 100%; text-align: center; }
+.header .logo h1 { font-size: 26px; letter-spacing: 1px; }
+.header .logo p { opacity: .55; font-size: 11px; }
+
+.album-section { margin: 8px 0 24px; }
+.album-ring {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-width: 390px;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(0,245,255,.3);
+    background: rgba(7,17,35,.7);
+    animation: none;
+}
+#album-cover {
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    object-fit: cover;
+    box-shadow: none;
+}
+.album-hologram, .album-light, #circle-spectrum { display: none !important; }
+
+.song-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    margin: 0 4px 18px;
+}
+.song-copy { min-width: 0; }
+.song-info h2 { font-size: 30px; margin: 0 0 5px; }
+.song-info p { font-size: 17px; opacity: .65; margin: 0; }
+.song-favorite {
+    flex: 0 0 48px; width: 48px; height: 48px; border: 0;
+    border-radius: 50%; background: transparent; color: #fff;
+    font-size: 26px; cursor: pointer;
+}
+
+.progress-section {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "bar bar bar" "current . duration";
+    gap: 8px 10px;
+    align-items: center;
+    margin: 0 4px 18px;
+}
+.progress { grid-area: bar; width: 100%; }
+#current-time { grid-area: current; }
+#duration { grid-area: duration; }
+.progress-section span { font-size: 12px; opacity: .7; }
+
+.controls {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 24px;
+}
+.controls button {
+    width: 52px; height: 52px; justify-self: center;
+    background: transparent; backdrop-filter: none; border: 0;
+}
+#play {
+    width: 82px; height: 82px; border-radius: 50%;
+    background: #071426; border: 3px solid var(--cyan);
+    box-shadow: 0 0 22px rgba(0,245,255,.38);
+}
+.controls button:hover { transform: none; }
+
+.player-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 4px 0 24px;
+}
+.player-quick-btn {
+    min-width: 0; height: 70px; border-radius: 15px;
+    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(14,27,48,.9); color: #fff;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 7px; font-size: 17px;
+}
+.player-quick-btn span { font-size: 11px; opacity: .8; }
+
+.volume-section { margin: 12px 0 22px; }
+.visualizer-section { margin-top: 12px; }
+.equalizer { margin-top: 12px; }
+
+@media (max-width: 480px) {
+    .app { padding: 18px 16px 130px; border-radius: 0; }
+    .album-ring { max-width: 100%; }
+    .song-info h2 { font-size: 27px; }
+    .controls { gap: 3px; }
+    .controls button { width: 45px; height: 45px; }
+    #play { width: 72px; height: 72px; }
+    .player-quick-actions { gap: 8px; }
+    .player-quick-btn { height: 64px; }
+}
