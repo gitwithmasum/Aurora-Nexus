@@ -383,7 +383,7 @@ let masterGain = null;
 
 let pulseRadius = 0;
 
-const particles = [];
+const galaxyParticles = [];
 
 
 
@@ -1889,27 +1889,8 @@ analyser.fftSize = 256;
 const bufferLength = analyser.frequencyBinCount;
 
 const dataArray = new Uint8Array(bufferLength);
+const eqDataArray = new Uint8Array(bufferLength);
 
-
-/*====================================
-        PARTICLES
-=====================================*/
-
-for (let i = 0; i < 60; i++) {
-
-    particles.push({
-
-        x: Math.random() * canvas.width,
-
-        y: Math.random() * canvas.height,
-
-        r: Math.random() * 3 + 1,
-
-        speed: Math.random() * 1.5 + .5
-
-    });
-
-}
 
 /*====================================
                 STARS
@@ -2298,39 +2279,6 @@ function drawVisualizer() {
 
         ctx.shadowColor = "#ffffff";
 
-        ctx.fill();
-
-    });
-
-    /*==============================
-            PARTICLES
-    ==============================*/
-
-    particles.forEach(p => {
-
-        p.y -= p.speed;
-
-        if (p.y < 0) {
-
-            p.y = canvas.height;
-            p.x = Math.random() * canvas.width;
-
-        }
-
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            p.r,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fillStyle = accent;
-        ctx.shadowBlur = 20;
-
-        ctx.shadowColor = accent;
         ctx.fill();
 
     });
@@ -3223,15 +3171,8 @@ function drawEQWave() {
             FREQUENCY DATA
     --------------------------------*/
 
-    const bufferLength =
-        analyser.frequencyBinCount;
-
-    const dataArray =
-        new Uint8Array(bufferLength);
-
-
     analyser.getByteFrequencyData(
-        dataArray
+        eqDataArray
     );
 
 
@@ -3313,7 +3254,7 @@ function drawEQWave() {
 
 
         const value =
-            dataArray[dataIndex];
+            eqDataArray[dataIndex];
 
 
         const percent =
@@ -3436,9 +3377,9 @@ window.addEventListener(
 =====================================*/
 
 
-for (let i = 0; i < 80; i++) {
+for (let i = 0; i < 40; i++) {
 
-    particles.push({
+    galaxyParticles.push({
 
         angle: Math.random() * Math.PI * 2,
 
@@ -3763,7 +3704,7 @@ function drawCircleSpectrum() {
     
     circleCtx.shadowBlur = 0;
 
-    particles.forEach(p => {
+    galaxyParticles.forEach(p => {
 
         p.angle += p.speed;
 
