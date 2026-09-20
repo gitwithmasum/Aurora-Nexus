@@ -1724,111 +1724,94 @@ function updateAI() {
         VOLUME ENGINE
 =====================================*/
 
+function applyVolume(newVolume, persist = true) {
+    volume = Math.max(0, Math.min(1, newVolume));
 
-audio.volume = volume;
+    // Keep both players in sync without resetting playback position.
+    audio.volume = volume;
+    nextAudio.volume = volume;
+    if (activePlayer) activePlayer.volume = volume;
 
-// Initialize
-updateVolume();
+    updateVolume();
+    if (persist) savePlayerState();
+}
 
-// Mouse Wheel Volume
-volumeKnob.addEventListener("wheel", (e) => {
+applyVolume(volume, false);
 
+// Desktop: mouse wheel.
+volumeKnob?.addEventListener("wheel", (e) => {
     e.preventDefault();
+    applyVolume(volume + (e.deltaY < 0 ? 0.05 : -0.05));
+}, { passive: false });
 
-    console.log("Wheel:", e.deltaY);
+// Mobile + desktop: drag around the circular volume control.
+let volumeDragging = false;
+let volumeDragStartY = 0;
+let volumeDragStartValue = 0;
+let volumeDidDrag = false;
 
-    if (e.deltaY < 0) {
+volumeKnob?.addEventListener("pointerdown", (e) => {
+    volumeDragging = true;
+    volumeDidDrag = false;
+    volumeDragStartY = e.clientY;
+    volumeDragStartValue = volume;
+    volumeKnob.setPointerCapture?.(e.pointerId);
+    e.preventDefault();
+});
 
-        volume += 0.05;
+volumeKnob?.addEventListener("pointermove", (e) => {
+    if (!volumeDragging) return;
 
-    } else {
+    const deltaY = volumeDragStartY - e.clientY;
+    if (Math.abs(deltaY) > 3) volumeDidDrag = true;
 
-        volume -= 0.05;
+    applyVolume(volumeDragStartValue + deltaY / 140, false);
+    e.preventDefault();
+});
 
-    }
-
-    volume = Math.max(0, Math.min(1, volume));
-
-    audio.volume = volume;
-    nextAudio.volume = volume;
-    activePlayer.volume = volume;
-    inactivePlayer.volume = 0;
-    inactivePlayer.currentTime = 0;
-
-    updateVolume();
+function finishVolumeDrag(e) {
+    if (!volumeDragging) return;
+    volumeDragging = false;
+    volumeKnob.releasePointerCapture?.(e.pointerId);
     savePlayerState();
+}
 
-});
+volumeKnob?.addEventListener("pointerup", finishVolumeDrag);
+volumeKnob?.addEventListener("pointercancel", finishVolumeDrag);
 
-// Click = Mute / Unmute
-volumeKnob.addEventListener("click", () => {
-
-    if (volume > 0) {
-
-        volume = 0;
-
-    } else {
-
-        volume = 1;
-
+// Tap toggles mute/unmute. A drag must not accidentally mute.
+volumeKnob?.addEventListener("click", (e) => {
+    if (volumeDidDrag) {
+        volumeDidDrag = false;
+        e.preventDefault();
+        return;
     }
 
-    audio.volume = volume;
-    nextAudio.volume = volume;
-    activePlayer.volume = volume;
-
-    updateVolume();
-
+    applyVolume(volume > 0 ? 0 : 1);
 });
 
-// Update UI
 function updateVolume() {
+    volumeValue.textContent = Math.round(volume * 100) + "%";
 
-    // Percentage
-    volumeValue.textContent =
-        Math.round(volume * 100) + "%";
-
-    // Icon
     if (volume === 0) {
-
-        volumeIcon.className =
-            "fa-solid fa-volume-xmark";
-
-    }
-    else if (volume < 0.5) {
-
-        volumeIcon.className =
-            "fa-solid fa-volume-low";
-
-    }
-    else {
-
-        volumeIcon.className =
-            "fa-solid fa-volume-high";
-
+        volumeIcon.className = "fa-solid fa-volume-xmark";
+    } else if (volume < 0.5) {
+        volumeIcon.className = "fa-solid fa-volume-low";
+    } else {
+        volumeIcon.className = "fa-solid fa-volume-high";
     }
 
-    // Ring
     const angle = volume * 360;
 
-    const volumeRing =
-        document.getElementById("volume-ring");
-
     if (volumeRing) {
-
         volumeRing.style.background =
             `conic-gradient(
                 #00F5FF ${angle}deg,
                 rgba(255,255,255,.08) ${angle}deg
             )`;
-
     }
-  
+}
 
-} 
-
-
- 
 /*====================================
         THEME ENGINE
 =====================================*/
