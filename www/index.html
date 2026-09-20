@@ -134,25 +134,6 @@
         </header>
 
         <!-- ===============================
-                  AI Status
-        ================================ -->
-
-        <section class="ai-status">
-
-            <div class="status-indicator"></div>
-
-            <div class="status-info">
-
-                <h3>AI STATUS</h3>
-
-                <p>ONLINE</p>
-
-            </div>
-
-        </section>
-
-
-        <!-- ===============================
                 Album Section
         ================================ -->
 
@@ -175,19 +156,13 @@
         ================================ -->
 
         <section class="song-info">
-
-            <h2 id="song-title">
-
-                Believer
-
-            </h2>
-
-            <p id="artist-name">
-
-                Imagine Dragons
-
-            </p>
-
+            <div class="song-copy">
+                <h2 id="song-title">Believer</h2>
+                <p id="artist-name">Imagine Dragons</p>
+            </div>
+            <button id="favorite-btn" class="song-favorite" aria-label="Favorite">
+                <i class="fa-regular fa-heart"></i>
+            </button>
         </section>
 
         <!-- ===============================
@@ -250,28 +225,20 @@
          
         </section>
             
-        <!--==================================
-                AI ACTION PANEL
-        ===================================-->
-        
-        <section class="ai-actions">
-        
-            <button id="favorite-btn" class="action-btn">
-        
-                <i class="fa-regular fa-heart"></i>
-        
-                <span>FAVORITE</span>
-        
+        <!-- Quick Actions -->
+        <section class="player-quick-actions">
+            <button class="player-quick-btn" data-panel="ai">
+                <i class="fa-solid fa-music"></i><span>Lyrics</span>
             </button>
-        
-            <button id="share-btn" class="action-btn">
-        
-                <i class="fa-solid fa-share-nodes"></i>
-        
-                <span>SHARE</span>
-        
+            <button class="player-quick-btn" id="player-queue-shortcut">
+                <i class="fa-solid fa-list"></i><span>Queue</span>
             </button>
-        
+            <button id="share-btn" class="player-quick-btn">
+                <i class="fa-solid fa-share-nodes"></i><span>Share</span>
+            </button>
+            <button class="player-quick-btn" data-panel="device-music">
+                <i class="fa-solid fa-download"></i><span>Device</span>
+            </button>
         </section>
 
        
