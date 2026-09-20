@@ -2633,7 +2633,7 @@ const SpeechRecognition =
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
 
-if (SpeechRecognition) {
+if (SpeechRecognition && voiceBtn) {
 
     const recognition = new SpeechRecognition();
 
